@@ -12,6 +12,7 @@
 #include "AI_Criteria.h"
 #include "ai_baseactor.h"
 #include "ai_speechfilter.h"
+#include "ai_basenpc.h"
 #ifndef _WIN32
 #undef min
 #endif
@@ -392,7 +393,7 @@ public:
 	void			InputDisableSpeakWhileScripting( inputdata_t &inputdata );
 	
 	void			AnswerQuestion( CAI_PlayerAlly *pQuestioner, int iQARandomNum, bool bAnsweringHello );
-
+	
 protected:
 	
 #ifdef HL2_DLL
