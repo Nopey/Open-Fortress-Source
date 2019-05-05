@@ -239,9 +239,9 @@ void CGameWeaponManager::Think()
 		pCandidate = candidates[i];
 		Assert( !pCandidate->IsEffectActive( EF_NODRAW ) );
 
-		if ( gpGlobals->maxClients == 1 )
+		//if ( gpGlobals->maxClients == 1 )
 		{
-			CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+			CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(pCandidate);
 			// Nodraw serves as a flag that this weapon is already being removed since
 			// all we're really doing inside this loop is marking them for removal by
 			// the entity system. We don't want to count the same weapon as removed
@@ -250,19 +250,19 @@ void CGameWeaponManager::Think()
 			{
 				fRemovedOne = true;
 			}
-			else if( !pPlayer->FInViewCone( pCandidate ) )
-			{
-				fRemovedOne = true;
-			}
+			//else if( !pPlayer->FInViewCone( pCandidate ) )
+			//{
+			//	fRemovedOne = true;
+			//}
 			else if ( UTIL_DistApprox( pPlayer->GetAbsOrigin(), pCandidate->GetAbsOrigin() ) > (30*12) )
 			{
 				fRemovedOne = true;
 			}
 		}
-		else
-		{
-			fRemovedOne = true;
-		}
+		//else
+		//{
+		//	fRemovedOne = true;
+		//}
 
 		if( fRemovedOne )
 		{

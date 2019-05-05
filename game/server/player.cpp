@@ -195,7 +195,7 @@ ConVar  player_debug_print_damage( "player_debug_print_damage", "0", FCVAR_CHEAT
 
 void CC_GiveCurrentAmmo( void )
 {
-	CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
+	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
 
 	if( pPlayer )
 	{
@@ -7858,9 +7858,9 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 	{
 		pPlayer = (CBasePlayer *)data.pActivator;
 	}
-	else if ( !g_pGameRules->IsDeathmatch() )
+	else
 	{
-		pPlayer = UTIL_GetLocalPlayer();
+		pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 	}
 
 	if ( pPlayer )

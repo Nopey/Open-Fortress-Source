@@ -72,9 +72,6 @@ $Project "Server (OFD)"
 		$File	"trigger_area_capture.cpp"
 		$File	"trigger_area_capture.h"
 		
-		$File	"point_entity_finder.cpp"
-		$File	"skyboxswapper.cpp"
-		
 		$File	"ai_eventresponse.cpp"
 		$File	"ai_eventresponse.h"
 		$File	"h_cycler.cpp"

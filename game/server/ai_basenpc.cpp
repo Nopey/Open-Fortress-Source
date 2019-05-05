@@ -23,7 +23,7 @@
 #include "game.h"
 #include "shot_manipulator.h"
 
-#if TRUE // TRUE //def HL2_DLL
+#ifdef HL2_DLL
 #include "ai_interactions.h"
 #include "hl2_gamerules.h"
 #endif // HL2_DLL
@@ -70,7 +70,7 @@
 #include "checksum_crc.h"
 #include "iservervehicle.h"
 #include "filters.h"
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 #include "npc_bullseye.h"
 #include "hl2_player.h"
 #include "weapon_physcannon.h"
@@ -87,7 +87,7 @@
 #include "datacache/imdlcache.h"
 #include "vstdlib/jobthread.h"
 
-#if TRUE // TRUE //def HL2_EPISODIC
+#ifdef HL2_EPISODIC
 #include "npc_alyx_episodic.h"
 #endif
 
@@ -152,7 +152,7 @@ ConVar	ai_use_think_optimizations( "ai_use_think_optimizations", "1" );
 
 ConVar	ai_test_moveprobe_ignoresmall( "ai_test_moveprobe_ignoresmall", "0" );
 
-#if TRUE //def HL2_EPISODIC
+#ifdef HL2_EPISODIC
 extern ConVar ai_vehicle_avoidance;
 #endif // HL2_EPISODIC
 
@@ -254,9 +254,10 @@ int CAI_Manager::NumAIs()
 
 //-------------------------------------
 
-void CAI_Manager::AddAI( CAI_BaseNPC *pAI )
+int CAI_Manager::AddAI( CAI_BaseNPC *pAI )
 {
 	m_AIs.AddToTail( pAI );
+	return NumAIs()-1; // return the index it was added to
 }
 
 //-------------------------------------
@@ -642,7 +643,7 @@ void CAI_BaseNPC::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bo
 {
 	BaseClass::Ignite( flFlameLifetime, bNPCOnly, flSize, bCalledByLevelDesigner );
 
-#if TRUE //def HL2_EPISODIC
+/*#ifdef HL2_EPISODIC
 	CBasePlayer *pPlayer = AI_GetSinglePlayer();
 	if ( pPlayer->IRelationType( this ) != D_LI )
 	{
@@ -653,7 +654,7 @@ void CAI_BaseNPC::Ignite( float flFlameLifetime, bool bNPCOnly, float flSize, bo
 			alyx->EnemyIgnited( this );
 		}
 	}
-#endif
+#endif*/
 }
 
 //-----------------------------------------------------------------------------
@@ -777,9 +778,8 @@ int CAI_BaseNPC::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 		{
 			// See if the person that injured me is an NPC.
 			CAI_BaseNPC *pAttacker = dynamic_cast<CAI_BaseNPC *>( info.GetAttacker() );
-			CBasePlayer *pPlayer = AI_GetSinglePlayer();
 
-			if( pAttacker && pAttacker->IsAlive() && pPlayer )
+			if( pAttacker && pAttacker->IsAlive() && UTIL_GetNearestPlayer(GetAbsOrigin()) )
 			{
 				if( pAttacker->GetSquad() != NULL && pAttacker->IsInPlayerSquad() )
 				{
@@ -1438,7 +1438,7 @@ void CAI_BaseNPC::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::FireBullets( const FireBulletsInfo_t &info )
 {
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 	// If we're shooting at a bullseye, become perfectly accurate if the bullseye demands it
 	if ( GetEnemy() && GetEnemy()->Classify() == CLASS_BULLSEYE )
 	{
@@ -3110,7 +3110,7 @@ void CAI_BaseNPC::UpdateEfficiency( bool bInPVS )
 
 	//---------------------------------
 
-	CBasePlayer *pPlayer = AI_GetSinglePlayer(); 
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
 	static Vector vPlayerEyePosition;
 	static Vector vPlayerForward;
 	static int iPrevFrame = -1;
@@ -3354,7 +3354,7 @@ void CAI_BaseNPC::UpdateSleepState( bool bInPVS )
 {
 	if ( GetSleepState() > AISS_AWAKE )
 	{
-		CBasePlayer *pLocalPlayer = AI_GetSinglePlayer();
+		CBasePlayer *pLocalPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 		if ( !pLocalPlayer )
 		{
 			if ( gpGlobals->maxClients > 1 )
@@ -3554,7 +3554,7 @@ void CAI_BaseNPC::RebalanceThinks()
 
 		int i;
 
-		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 		Vector vPlayerForward;
 		Vector vPlayerEyePosition;
 
@@ -3835,7 +3835,7 @@ void CAI_BaseNPC::SetPlayerAvoidState( void )
 
 		GetPlayerAvoidBounds( &vMins, &vMaxs );
 
-		CBasePlayer *pLocalPlayer = AI_GetSinglePlayer();
+		CBasePlayer *pLocalPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 
 		if ( pLocalPlayer )
 		{
@@ -4746,7 +4746,7 @@ void CAI_BaseNPC::GatherConditions( void )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::PrescheduleThink( void )
 {
-#if TRUE //def HL2_EPISODIC
+#ifdef HL2_EPISODIC
 	CheckForScriptedNPCInteractions();
 #endif
 
@@ -4810,14 +4810,14 @@ void CAI_BaseNPC::RunAI( void )
 		}
 	}
 
-	if( ai_debug_loners.GetBool() && !IsInSquad() && AI_IsSinglePlayer() )
+	if( ai_debug_loners.GetBool() && !IsInSquad() )
 	{
 		Vector right;
 		Vector vecPoint;
 
 		vecPoint = EyePosition() + Vector( 0, 0, 12 );
 
-		UTIL_GetLocalPlayer()->GetVectors( NULL, &right, NULL );
+		UTIL_GetNearestPlayer(GetAbsOrigin())->GetVectors( NULL, &right, NULL );
 
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 64 ), 255, 0, 0, false , 0.1 );
 		NDebugOverlay::Line( vecPoint, vecPoint + Vector( 0, 0, 32 ) + right * 32, 255, 0, 0, false , 0.1 );
@@ -5879,7 +5879,7 @@ void CAI_BaseNPC::CheckTarget( CBaseEntity *pTarget )
 //-----------------------------------------------------------------------------
 CAI_BaseNPC *CAI_BaseNPC::CreateCustomTarget( const Vector &vecOrigin, float duration )
 {
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 	CNPC_Bullseye *pTarget = (CNPC_Bullseye*)CreateEntityByName( "npc_bullseye" );
 
 	ASSERT( pTarget != NULL );
@@ -7710,9 +7710,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 		if (!pEnemy || !pEnemy->IsAlive())
 		{
 			if ( pEnemy )
-			{
 				DbgEnemyMsg( this, "    %s rejected: dead\n", pEnemy->GetDebugName() );
-			}
 			continue;
 		}
 		
@@ -7787,9 +7785,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 		{
 			DbgEnemyMsg( this, "    %s accepted (1)\n", pEnemy->GetDebugName() );
 			if ( pBestEnemy )
-			{
 				DbgEnemyMsg( this, "    (%s displaced)\n", pBestEnemy->GetDebugName() );
-			}
 
 			iBestPriority	 = IRelationPriority ( pEnemy );
 			iBestDistSq		 = (pEnemy->GetAbsOrigin() - GetAbsOrigin() ).LengthSqr();
@@ -7803,9 +7799,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 		{
 			DbgEnemyMsg( this, "    %s accepted\n", pEnemy->GetDebugName() );
 			if ( pBestEnemy )
-			{
 				DbgEnemyMsg( this, "    (%s displaced due to priority, %d > %d )\n", pBestEnemy->GetDebugName(), IRelationPriority( pEnemy ), iBestPriority );
-			}
 			// this entity is disliked MORE than the entity that we
 			// currently think is the best visible enemy. No need to do
 			// a distance check, just get mad at this one for now.
@@ -7939,9 +7933,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 
 			DbgEnemyMsg( this, "    %s accepted\n", pEnemy->GetDebugName() );
 			if ( pBestEnemy )
-			{
 				DbgEnemyMsg( this, "    (%s displaced due to distance/visibility)\n", pBestEnemy->GetDebugName() );
-			}
 			fBestSeen		 = fCurSeen;
 			fBestVisible	 = fCurVisible;
 			iBestDistSq		 = iDistSq;
@@ -7950,9 +7942,7 @@ CBaseEntity *CAI_BaseNPC::BestEnemy( void )
 			bBestUnreachable = bUnreachable;
 		}
 		else
-		{
 			DbgEnemyMsg( this, "    %s rejected: lower priority\n", pEnemy->GetDebugName() );
-		}
 	}
 
 	DbgEnemyMsg( this, "} == %s\n", pBestEnemy->GetDebugName() );
@@ -8043,7 +8033,6 @@ float CAI_BaseNPC::CalcIdealYaw( const Vector &vecTarget )
 	{
 		vecProjection.x = -vecTarget.y;
 		vecProjection.y = vecTarget.x;
-		vecProjection.z = 0;
 
 		return UTIL_VecToYaw( vecProjection - GetLocalOrigin() );
 	}
@@ -8051,7 +8040,6 @@ float CAI_BaseNPC::CalcIdealYaw( const Vector &vecTarget )
 	{
 		vecProjection.x = vecTarget.y;
 		vecProjection.y = vecTarget.x;
-		vecProjection.z = 0;
 
 		return UTIL_VecToYaw( vecProjection - GetLocalOrigin() );
 	}
@@ -8677,7 +8665,7 @@ void CAI_BaseNPC::DrawDebugGeometryOverlays(void)
 
 		info.SetDamage( m_iHealth );
 		info.SetAttacker( this );
-		info.SetInflictor( ( AI_IsSinglePlayer() ) ? (CBaseEntity *)AI_GetSinglePlayer() : (CBaseEntity *)this );
+		info.SetInflictor( (CBaseEntity *)this );
 		info.SetDamageType( DMG_GENERIC );
 
 		m_debugOverlays &= ~OVERLAY_NPC_KILL_BIT;
@@ -9517,7 +9505,7 @@ Vector CAI_BaseNPC::GetShootEnemyDir( const Vector &shootOrigin, bool bNoisy )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::CollectShotStats( const Vector &vecShootOrigin, const Vector &vecShootDir )
 {
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 	if( ai_shot_stats.GetBool() != 0 && GetEnemy()->IsPlayer() )
 	{
 		int iterations = ai_shot_stats_term.GetInt();
@@ -9558,7 +9546,7 @@ void CAI_BaseNPC::CollectShotStats( const Vector &vecShootOrigin, const Vector &
 #endif
 }
 
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 //-----------------------------------------------------------------------------
 // Purpose: Return the actual position the NPC wants to fire at when it's trying
 //			to hit it's current enemy.
@@ -9908,7 +9896,7 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 {
 	if ( !stricmp( name, "!player" ))
 	{
-		return ( CBaseEntity * )AI_GetSinglePlayer();
+		return UTIL_GetNearestPlayer(GetAbsOrigin());
 	}
 	else if ( !stricmp( name, "!enemy" ) )
 	{
@@ -9923,7 +9911,7 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 	{
 		// FIXME: look at CBaseEntity *CNPCSimpleTalker::FindNearestFriend(bool fPlayer)
 		// punt for now
-		return ( CBaseEntity * )AI_GetSinglePlayer();
+		return UTIL_GetNearestPlayer(GetAbsOrigin());
 	}
 	else if (!stricmp( name, "self" ))
 	{
@@ -9943,7 +9931,7 @@ CBaseEntity *CAI_BaseNPC::FindNamedEntity( const char *name, IEntityFindFilter *
 		{
 			DevMsg( "ERROR: \"player\" is no longer used, use \"!player\" in vcd instead!\n" );
 		}
-		return ( CBaseEntity * )AI_GetSinglePlayer();
+		return UTIL_GetNearestPlayer(GetAbsOrigin());
 	}
 	else
 	{
@@ -11372,7 +11360,8 @@ CAI_BaseNPC::CAI_BaseNPC(void)
 	m_interuptSchedule			= NULL;
 	m_nDebugPauseIndex			= 0;
 
-	g_AI_Manager.AddAI( this );
+//	SetAIIndex( g_AI_Manager.AddAI( this ) );
+//	lagcompensation->RemoveNpcData( GetAIIndex() ); // make sure we're not inheriting anyone else's data
 	
 	if ( g_AI_Manager.NumAIs() == 1 )
 	{
@@ -11396,6 +11385,9 @@ CAI_BaseNPC::CAI_BaseNPC(void)
 CAI_BaseNPC::~CAI_BaseNPC(void)
 {
 	g_AI_Manager.RemoveAI( this );
+
+	// this should stop a crash occuring when our death immediately creates a new NPC (eg headcrab from zombie)
+//	lagcompensation->RemoveNpcData( GetAIIndex() );
 
 	delete m_pLockedBestSound;
 
@@ -11734,7 +11726,7 @@ void CAI_BaseNPC::CleanupScriptsOnTeleport( bool bEnrouteAsWell )
 //-----------------------------------------------------------------------------
 bool CAI_BaseNPC::HandleInteraction(int interactionType, void *data, CBaseCombatCharacter* sourceEnt)
 {
-#if TRUE //def HL2_DLL
+#ifdef HL2_DLL
 	if ( interactionType == g_interactionBarnacleVictimGrab )
 	{
 		// Make the victim stop thinking so they're as good as dead without 
@@ -11916,7 +11908,7 @@ bool CAI_BaseNPC::CineCleanup()
 			{
 				SetLocalOrigin( origin );
 
-				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, UTIL_GetLocalPlayer() );
+				int drop = UTIL_DropToFloor( this, MASK_NPCSOLID, UTIL_GetNearestVisiblePlayer(this) );
 
 				// Origin in solid?  Set to org at the end of the sequence
 				if ( ( drop < 0 ) || sv_test_scripted_sequences.GetBool() )
@@ -11993,7 +11985,7 @@ void CAI_BaseNPC::Teleport( const Vector *newPosition, const QAngle *newAngles, 
 
 bool CAI_BaseNPC::FindSpotForNPCInRadius( Vector *pResult, const Vector &vStartPos, CAI_BaseNPC *pNPC, float radius, bool bOutOfPlayerViewcone )
 {
-	CBasePlayer *pPlayer = AI_GetSinglePlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(pNPC->GetAbsOrigin());
 	QAngle fan;
 
 	fan.x = 0;
@@ -12056,7 +12048,7 @@ bool CAI_BaseNPC::IsNavigationUrgent()
 
 bool CAI_BaseNPC::ShouldFailNav( bool bMovementFailed )
 {
-#if TRUE //def HL2_EPISODIC
+#ifdef HL2_EPISODIC
 
 	if ( ai_vehicle_avoidance.GetBool() )
 	{
@@ -12529,11 +12521,11 @@ bool CAI_BaseNPC::IsPlayerAlly( CBasePlayer *pPlayer )
 	{
 		// in multiplayer mode we need a valid pPlayer 
 		// or override this virtual function
-		if ( !AI_IsSinglePlayer() )
-			return false;
+//		if ( !AI_IsSinglePlayer() )
+//			return false;
 
 		// NULL means single player mode
-		pPlayer = UTIL_GetLocalPlayer();
+		pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 	}
 
 	return ( !pPlayer || IRelationType( pPlayer ) == D_LI ); 
@@ -12827,7 +12819,7 @@ bool CAI_BaseNPC::FindNearestValidGoalPos( const Vector &vTestPoint, Vector *pRe
 
 	if ( vCandidate != vec3_invalid )
 	{
-		AI_Waypoint_t *pPathToPoint = GetPathfinder()->BuildRoute( GetAbsOrigin(), vCandidate, AI_GetSinglePlayer(), 5*12, NAV_NONE, true );
+		AI_Waypoint_t *pPathToPoint = GetPathfinder()->BuildRoute( GetAbsOrigin(), vCandidate, UTIL_GetNearestPlayer(GetAbsOrigin()), 5*12, NAV_NONE, true );
 		if ( pPathToPoint )
 		{
 			GetPathfinder()->UnlockRouteNodes( pPathToPoint );
@@ -13960,7 +13952,7 @@ void CAI_BaseNPC::CalculateForcedInteractionPosition( void )
 //-----------------------------------------------------------------------------
 void CAI_BaseNPC::PlayerHasIlluminatedNPC( CBasePlayer *pPlayer, float flDot )
 {
-#if TRUE //def HL2_EPISODIC
+#ifdef HL2_EPISODIC
 	if ( IsActiveDynamicInteraction() )
 	{
 		ScriptedNPCInteraction_t *pInteraction = GetRunningDynamicInteraction();

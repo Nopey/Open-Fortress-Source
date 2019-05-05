@@ -933,7 +933,8 @@ void CBaseEntity::DrawDebugGeometryOverlays(void)
 			}
 		}
 	}
-	if ( m_debugOverlays & OVERLAY_SHOW_BLOCKSLOS )
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+	if (m_debugOverlays & OVERLAY_AUTOAIM_BIT && (GetFlags()&FL_AIMTARGET) && pPlayer != NULL)
 	{
 		if ( BlocksLOS() )
 		{
@@ -945,7 +946,7 @@ void CBaseEntity::DrawDebugGeometryOverlays(void)
 		// Crude, but it gets the point across.
 		Vector vecCenter = GetAutoAimCenter();
 		Vector vecRight, vecUp, vecDiag;
-		CBasePlayer *pPlayer = AI_GetSinglePlayer();
+		//CBasePlayer *pPlayer = AI_GetSinglePlayer();
 		float radius = GetAutoAimRadius();
 
 		QAngle angles = pPlayer->EyeAngles();
@@ -6669,7 +6670,7 @@ void CBaseEntity::DispatchResponse( const char *conceptName )
 	ModifyOrAppendCriteria( set );
 
 	// Append local player criteria to set,too
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 	if( pPlayer )
 		pPlayer->ModifyOrAppendPlayerCriteria( set );
 
@@ -6728,7 +6729,7 @@ void CBaseEntity::DumpResponseCriteria( void )
 	ModifyOrAppendCriteria( set );
 
 	// Append local player criteria to set,too
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
 	if ( pPlayer )
 	{
 		pPlayer->ModifyOrAppendPlayerCriteria( set );
