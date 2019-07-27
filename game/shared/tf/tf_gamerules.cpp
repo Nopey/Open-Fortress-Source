@@ -2211,8 +2211,14 @@ CBaseEntity *CTFGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 	{
 		if ( TheNavMesh->IsLoaded() )
 		{
-			int iArea = RandomInt( 0, TheNavAreas.Count() );
-
+			int count = TheNavAreas.Count();
+			int iArea = RandomInt( 0, count );
+			int patience;
+			for(patience = count; patience; patience--){
+				if ( TheNavAreas[iArea]->IsFlat() ) break;
+				if ( ++iArea >= count ) iArea-=count;
+			}
+			if (!patience) DevMsg( "No flat navigation area found for of_navmesh_spawns, spawning player on stair anyways\n" );
 			pPlayer->SetLocalOrigin( TheNavAreas[iArea]->GetRandomPoint() + Vector( 0, 0, 1 ) );
 			pPlayer->SetAbsVelocity( vec3_origin );
 			pPlayer->m_Local.m_vecPunchAngle = vec3_angle;
@@ -2221,7 +2227,7 @@ CBaseEntity *CTFGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 		}
 		else
 		{
-			DevMsg( "No navigation mesh avalaible with of_navmesh_spawns enabled " );
+			DevMsg( "No navigation mesh avalaible with of_navmesh_spawns enabled\n" );
 		}
 	}
 
