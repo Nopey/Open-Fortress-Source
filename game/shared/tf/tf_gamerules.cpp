@@ -2211,19 +2211,33 @@ CBaseEntity *CTFGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 	{
 		if ( TheNavMesh->IsLoaded() )
 		{
-			int count = TheNavAreas.Count();
-			int iArea = RandomInt( 0, count );
-			int patience;
-			for(patience = count; patience; patience--){
-				if ( TheNavAreas[iArea]->IsFlat() ) break;
-				if ( ++iArea >= count ) iArea-=count;
+			int iCount = TheNavAreas.Count();
+			int iArea = RandomInt( 0, iCount );
+			int iPatience;
+			for (iPatience = iCount; iPatience; iPatience--)
+			{
+				if ( TheNavAreas[iArea]->IsFlat() )
+				{
+					for ( int iAreaPatience=4; iAreaPatience; iAreaPatience-- )
+					{
+						Vector vSpawn = TheNavAreas[iArea]->GetRandomPoint() + Vector( 0, 0, 32 );
+						trace_t trace;
+						UTIL_TraceHull( vSpawn, vSpawn, VEC_HULL_MIN, VEC_HULL_MAX, MASK_PLAYERSOLID, pPlayer, COLLISION_GROUP_PLAYER_MOVEMENT, &trace );
+						if ( !trace.DidHit() )
+						{
+							// SUCCESS
+							pPlayer->SetLocalOrigin( vSpawn );
+							pPlayer->SetAbsVelocity( vec3_origin );
+							pPlayer->m_Local.m_vecPunchAngle = vec3_angle;
+							pPlayer->m_Local.m_vecPunchAngleVel = vec3_angle;
+
+							return NULL;
+						}
+					}
+				}
+				if ( ++iArea >= iCount ) iArea -= iCount;
 			}
-			if (!patience) DevMsg( "No flat navigation area found for of_navmesh_spawns, spawning player on stair anyways\n" );
-			pPlayer->SetLocalOrigin( TheNavAreas[iArea]->GetRandomPoint() + Vector( 0, 0, 1 ) );
-			pPlayer->SetAbsVelocity( vec3_origin );
-			pPlayer->m_Local.m_vecPunchAngle = vec3_angle;
-			pPlayer->m_Local.m_vecPunchAngleVel = vec3_angle;
-			return NULL;
+			DevMsg( "No valid nav_area found in nav_mesh for of_navmesh_spawns, nav mesh has %d areas\n", iCount );
 		}
 		else
 		{
