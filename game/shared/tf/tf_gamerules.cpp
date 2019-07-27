@@ -56,6 +56,7 @@
 	
 	#include "ai_basenpc.h"
 	#include "ai_dynamiclink.h"
+	#include "nav_mesh.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -167,6 +168,8 @@ ConVar of_retromode ( "of_retromode", "-1", FCVAR_REPLICATED | FCVAR_NOTIFY, \
 
 ConVar of_grenades	( "of_grenades", "-1", FCVAR_REPLICATED | FCVAR_NOTIFY, \
 					"Enables grenades.\n-1 = Depends on Retro mode\n 0 = Forced off\n 1 = Forced on (frags only)\n 2 = Forced on (class-based grenades)" );
+
+ConVar of_navmesh_spawns( "of_navmesh_spawns", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Select random spawns using the navigation mesh on Deathmatch mode" );
 
 #ifdef GAME_DLL
 //listner class creates a listener for the mEvent and returns the mEvent as true
@@ -2204,6 +2207,24 @@ ConCommand mp_showrespawntimes( "mp_showrespawntimes", cc_ShowRespawnTimes, "Sho
 
 CBaseEntity *CTFGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 {
+	if ( of_navmesh_spawns.GetBool() && IsDMGamemode() )
+	{
+		if ( TheNavMesh->IsLoaded() )
+		{
+			int iArea = RandomInt( 0, TheNavAreas.Count() );
+
+			pPlayer->SetLocalOrigin( TheNavAreas[iArea]->GetRandomPoint() + Vector( 0, 0, 1 ) );
+			pPlayer->SetAbsVelocity( vec3_origin );
+			pPlayer->m_Local.m_vecPunchAngle = vec3_angle;
+			pPlayer->m_Local.m_vecPunchAngleVel = vec3_angle;
+			return NULL;
+		}
+		else
+		{
+			DevMsg( "No navigation mesh avalaible with of_navmesh_spawns enabled " );
+		}
+	}
+
 	// get valid spawn point
 	CBaseEntity *pSpawnSpot = pPlayer->EntSelectSpawnPoint();
 
