@@ -3,6 +3,7 @@
 // Purpose: 
 //
 //=====================================================================================//
+#define VOLVO_PLEASE_I_DONT_WANT_BODIES
 
 #include "cbase.h"
 #include <ctype.h>

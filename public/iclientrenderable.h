@@ -278,5 +278,4 @@ public:
 	ClientRenderHandle_t m_hRenderHandle;
 };
 
-
 #endif // ICLIENTRENDERABLE_H

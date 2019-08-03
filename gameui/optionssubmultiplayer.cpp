@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -7,8 +7,11 @@
 
 #undef fopen
 
-#if !defined( _X360 )
+#if defined( _WIN132 )
 #include <windows.h> // SRC only!!
+#include <io.h>
+#elif defined ( __unix__ )
+#include <compat_posix.h>
 #endif
 
 #include "OptionsSubMultiplayer.h"
@@ -32,15 +35,15 @@
 #include <vgui/IPanel.h>
 #include <vgui_controls/MessageBox.h>
 
-#include "CvarTextEntry.h"
-#include "CvarToggleCheckButton.h"
-#include "CvarSlider.h"
-#include "LabeledCommandComboBox.h"
-#include "FileSystem.h"
-#include "EngineInterface.h"
-#include "BitmapImagePanel.h"
-#include "UtlBuffer.h"
-#include "ModInfo.h"
+#include "cvartextentry.h"
+#include "cvartogglecheckbutton.h"
+#include "cvarslider.h"
+#include "labeledcommandcombobox.h"
+#include "filesystem.h"
+#include "engineinterface.h"
+#include "bitmapimagepanel.h"
+#include "utlbuffer.h"
+#include "modinfo.h"
 #include "tier1/convar.h"
 
 
@@ -57,7 +60,6 @@
 
 #include "bitmap/tgawriter.h"
 #include "ivtex.h"
-#include <io.h>
 
 #if defined( _X360 )
 #include "xbox/xbox_win32stubs.h"
@@ -71,8 +73,6 @@ using namespace vgui;
 
 #define DEFAULT_SUIT_HUE 30
 #define DEFAULT_PLATE_HUE 6
-
-void UpdateLogoWAD( void *hdib, int r, int g, int b );
 
 struct ColorItem_t
 {
@@ -1070,6 +1070,11 @@ ConversionErrorType COptionsSubMultiplayer::ConvertBMPToTGA(const char *bmpPath,
 	if ( !IsPC() )
 		return CE_SOURCE_FILE_FORMAT_NOT_SUPPORTED;
 
+#ifdef __unix__
+	Msg("TODO: Implement BMP support in optionssubmultiplayer.cpp @Nopey");
+	return CE_SOURCE_FILE_FORMAT_NOT_SUPPORTED;
+#else
+
 	HBITMAP hBitmap = (HBITMAP)LoadImage(NULL, bmpPath, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION | LR_LOADFROMFILE | LR_DEFAULTSIZE);
 	BITMAP bitmap;
 
@@ -1287,6 +1292,7 @@ ConversionErrorType COptionsSubMultiplayer::ConvertBMPToTGA(const char *bmpPath,
 	}
 	DeleteObject(hBitmap);
 	return retval ? CE_SUCCESS : CE_ERROR_WRITING_OUTPUT_FILE;
+#endif
 }
 
 // read a TGA header from the current point in the file stream.
@@ -2446,7 +2452,22 @@ void COptionsSubMultiplayer::RemapPalette( char *filename, int topcolor, int bot
 	if (bmfHeader.bfType == DIB_HEADER_MARKER)
 	{
 		dwBitsSize = dwFileSize - sizeof(bmfHeader);
+#ifdef __unix__
+		char *pDIB = new char[dwBitsSize]();
+		{
+			g_pFullFileSystem->Read(pDIB, dwBitsSize, file );
 
+			lpbmi = (LPBITMAPINFO)pDIB;
+
+			// Remap palette
+			PaletteHueReplace( lpbmi->bmiColors, topcolor, SUIT_HUE_START, SUIT_HUE_END );
+			PaletteHueReplace( lpbmi->bmiColors, bottomcolor, PLATE_HUE_START, PLATE_HUE_END );
+
+			outbuffer.Put( pDIB, dwBitsSize );
+		}	
+
+		delete[] pDIB;
+#else
 		HGLOBAL hDIB = GlobalAlloc( GMEM_MOVEABLE | GMEM_ZEROINIT, dwBitsSize );
 		char *pDIB = (LPSTR)GlobalLock((HGLOBAL)hDIB);
 		{
@@ -2463,6 +2484,7 @@ void COptionsSubMultiplayer::RemapPalette( char *filename, int topcolor, int bot
 
 		GlobalUnlock( hDIB);
 		GlobalFree((HGLOBAL) hDIB);
+#endif
 	}
 
 	g_pFullFileSystem->Close(file);

@@ -1,18 +1,18 @@
-//========= Copyright © 1996-2008, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2008, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
 //=====================================================================================//
 
 #include "cbase.h"
-#include "VMainMenu.h"
-#include "UI_Shared.h"
-#include "EngineInterface.h"
-#include "VFooterPanel.h"
-#include "VHybridButton.h"
-#include "VFlyoutMenu.h"
-#include "vGenericConfirmation.h"
-#include "VAddons.h"
+#include <stdlib.h>
+#include "vmainmenu.h"
+#include "engineinterface.h"
+#include "vfooterpanel.h"
+#include "vhybridbutton.h"
+#include "vflyoutmenu.h"
+#include "vgenericconfirmation.h"
+#include "vaddons.h"
 //#include "VQuickJoin.h"
 //#include "basemodpanel.h"
 //#include "UIGameData.h"
@@ -589,11 +589,7 @@ void MainMenu::OnOpen()
 	if ( IsPC() && connect_lobby.GetString()[0] )
 	{
 		// if we were launched with "+connect_lobby <lobbyid>" on the command line, join that lobby immediately
-		uint64 nLobbyID = _atoi64( connect_lobby.GetString() );
-		if ( nLobbyID != 0 )
-		{
-			
-		}
+		uint64 nLobbyID = strtoull(connect_lobby.GetString(), nullptr, 10);
 		// clear the convar so we don't try to join that lobby every time we return to the main menu
 		connect_lobby.SetValue( "" );
 	}

@@ -53,47 +53,29 @@ ipch
 # diff stuff
 *.bak
 
-# Ignore tier1 since its compiled in VPC projs
-lib/public/tier1.lib
-lib/public/raytrace.lib
+# Ignore mathlib, tier1 & vgui controls, these are compiled in VPC projs
 lib/public/mathlib.lib
+lib/public/tier1.lib
 lib/public/vgui_controls.lib
+lib/public/vgui_controls_editor_2013.lib
+lib/public/raytrace.lib
+lib/osx32/mathlib.a
 lib/osx32/tier1.a
+lib/osx32/vgui_controls.a
+lib/osx32/vgui_controls_editor_2013.a
 lib/osx32/raytrace.a
+lib/public/linux32/mathlib.a
 lib/public/linux32/tier1.a
+lib/public/linux32/vgui_controls.a
+lib/public/linux32/vgui_controls_editor_2013.a
 lib/public/linux32/raytrace.a
 
 # Compiled stuff
-vgui2/vgui_controls/Debug/
-vgui2/vgui_controls/Release/
-vgui2/vgui_controls/obj_vgui_controls_osx32/
-game/client/Debug_open_fortress/
-game/client/Release_open_fortress/
-game/server/Debug_open_fortress/
-game/server/Release_open_fortress/
-gameui/Debug_open_fortress/
-gameui/Release_open_fortress/
-mathlib/Debug/
-mathlib/Release/
-mathlib/obj_mathlib_osx32/
-tier1/Debug/
-tier1/Release/
-tier1/obj_tier1_osx32
-game/client/obj_client_ofd_osx32/
-game/server/obj_server_ofd_osx32/
-game/client/obj_client_ofd_linux32/
-game/server/obj_server_ofd_linux32/
-raytrace/obj_raytrace_linux32/
-mathlib/obj_mathlib_linux32/
-tier1/obj_tier1_linux32/
-vgui2/vgui_controls/obj_vgui_controls_linux32/
+Debug*/
+Release*/
+obj_*_linux32/
+obj_*_osx32/
 build/
-vgui_editor/Debug_vgui_editor_2013/
-vgui_editor/Release_vgui_editor_2013/
-materialsystem/procshader/Debug_procshader_2013/
-materialsystem/procshader/Release_procshader_2013/
-shadereditor/Debug_shader_editor_2013/
-shadereditor/Release_shader_editor_2013/
 
 # Lua
 thirdparty/lua-5.2.3/Debug
@@ -106,6 +88,10 @@ vgui2/vgui_controls/generated_proto/htmlmessages.pb.cc
 /materialsystem/stdshaders/Debug_dx9_open_fortress
 /materialsystem/stdshaders/Release_dx9_open_fortress
 /store_symbols.ini
+lib/public/raytrace.lib
+
+# sed makes these, and occasionally doesn't delete them.
+sed??????
 
 # These makefiles are hand-made
 !devtools/*.mak

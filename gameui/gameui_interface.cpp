@@ -1,27 +1,33 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: Implements all the functions exported by the GameUI dll
 //
 // $NoKeywords: $
 //===========================================================================//
 
-#if !defined( _X360 )
+#ifdef _WIN32
 #include <windows.h>
+#include <io.h>
+#include <direct.h>
+#include "sys_utils.h"
+#elif defined __unix__
+#include "compat_posix.h"
+#include <unistd.h>
+// #include <dlfcn.h>
+#else
+typedef int[-1] unknownHost;
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
-#include <io.h>
 #include <tier0/dbg.h>
-#include <direct.h>
 
 #ifdef SendMessage
 #undef SendMessage
 #endif
 																
-#include "FileSystem.h"
-#include "GameUI_Interface.h"
-#include "Sys_Utils.h"
+#include "filesystem.h"
+#include "gameui_interface.h"
 #include "string.h"
 #include "tier0/icommandline.h"
 
@@ -88,7 +94,7 @@ CGlobalVarsBase *gpGlobals = NULL;
 IEngineSound *enginesound = NULL;
 ISoundEmitterSystemBase *soundemitterbase = NULL;
 IXboxSystem *xboxsystem = NULL;
-IVideoServices *g_pVideo = NULL;
+IVideoServices *video = NULL;
 
 static CSteamAPIContext g_SteamAPIContext;
 CSteamAPIContext *steamapicontext = &g_SteamAPIContext;
@@ -109,8 +115,15 @@ vgui::DHANDLE<CLoadingDialog> g_hLoadingDialog;
 vgui::VPANEL g_hLoadingBackgroundDialog = NULL;
 
 static CGameUI g_GameUI;
+
+#ifdef __unix__
+#pragma warning("TODO: Sorry! steam mutex on linux.. @Nopey");
+static void *g_hMutex = NULL;
+static void *g_hWaitMutex = NULL;
+#elif defined _WIN32
 static WHANDLE g_hMutex = NULL;
 static WHANDLE g_hWaitMutex = NULL;
+#endif
 
 static IGameClientExports *g_pGameClientExports = NULL;
 IGameClientExports *GameClientExports()
@@ -165,14 +178,25 @@ CGameUI::~CGameUI()
 }
 
 //#pragma message(FILE_LINE_STRING " !!FIXME!! replace all this with Sys_LoadGameModule")
+#ifdef _WIN32
 void *GetGameInterface(const char *dll, const char *name)
 {
 	const char *pGameDir = CommandLine()->ParmValue("-game", "hl2");
-	pGameDir = VarArgs("%s/bin/%s", pGameDir, dll);
+	pGameDir = VarArgs("%s/bin/%s.dll", pGameDir, dll);
 	CSysModule *module = Sys_LoadModule(pGameDir);
 	CreateInterfaceFn factory = Sys_GetFactory(module);
 	return factory(name, nullptr);
 }
+#elif defined(__unix__)
+void *GetGameInterface(const char *dll, const char *name)
+{
+	const char *pGameDir = CommandLine()->ParmValue("-game", "hl2");
+	pGameDir = VarArgs("%s/bin/%s.so", pGameDir, dll);
+	CSysModule *module = Sys_LoadModule(pGameDir);
+	CreateInterfaceFn factory = Sys_GetFactory(module);
+	return factory(name, nullptr);
+}
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Initialization
@@ -186,7 +210,7 @@ void CGameUI::Initialize( CreateInterfaceFn factory )
 	ConnectTier3Libraries( &factory, 1 );
 
 	//#pragma message(FILE_LINE_STRING " !!FIXME!!")
-	gpGlobals = ((IPlayerInfoManager *)GetGameInterface("server.dll", INTERFACEVERSION_PLAYERINFOMANAGER))->GetGlobalVars();
+	gpGlobals = ((IPlayerInfoManager *)GetGameInterface("server", INTERFACEVERSION_PLAYERINFOMANAGER))->GetGlobalVars();
 
 	gameuifuncs = (IGameUIFuncs *)factory(VENGINE_GAMEUIFUNCS_VERSION, NULL);
 	soundemitterbase = (ISoundEmitterSystemBase *)factory(SOUNDEMITTERSYSTEM_INTERFACE_VERSION, NULL);
@@ -195,7 +219,7 @@ void CGameUI::Initialize( CreateInterfaceFn factory )
 	enginesound = (IEngineSound *)factory(IENGINESOUND_CLIENT_INTERFACE_VERSION, NULL);
 	engine = (IVEngineClient *)factory( VENGINE_CLIENT_INTERFACE_VERSION, NULL );
 
-	g_pVideo = (IVideoServices *)factory(VIDEO_SERVICES_INTERFACE_VERSION, NULL);
+	video = (IVideoServices *)factory(VIDEO_SERVICES_INTERFACE_VERSION, NULL);
 
 #if !defined _X360 && !defined NO_STEAM
 	SteamAPI_InitSafe();
@@ -289,6 +313,7 @@ void CGameUI::Connect( CreateInterfaceFn gameFactory )
 	m_GameFactory = gameFactory;
 }
 
+#ifdef _WIN32
 //-----------------------------------------------------------------------------
 // Purpose: Callback function; sends platform Shutdown message to specified window
 //-----------------------------------------------------------------------------
@@ -297,6 +322,7 @@ int __stdcall SendShutdownMsgFunc(WHANDLE hwnd, int lparam)
 	Sys_PostMessage(hwnd, Sys_RegisterWindowMessage("ShutdownValvePlatform"), 0, 1);
 	return 1;
 }
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: Searches for GameStartup*.mp3 files in the sound/ui folder and plays one
@@ -352,9 +378,7 @@ void CGameUI::PlayGameStartupSound()
 	// did we find any?
 	if ( fileNames.Count() > 0 )
 	{
-		SYSTEMTIME SystemTime;
-		GetSystemTime( &SystemTime );
-		int index = SystemTime.wMilliseconds % fileNames.Count();
+		int index = RandomInt( 0, fileNames.Count() - 1 );
 
 		if ( fileNames.IsValidIndex( index ) && fileNames[index] )
 		{
@@ -401,10 +425,17 @@ void CGameUI::Start()
 	g_pVGuiLocalize->AddFile( "Resource/platform_%language%.txt");
 	g_pVGuiLocalize->AddFile( "Resource/vgui_%language%.txt");
 
+	#ifdef _WIN32
 	Sys_SetLastError( SYS_NO_ERROR );
+	#endif
 
 	if ( IsPC() )
 	{
+		#ifdef __unix__
+		Msg("TODO: Sorry! steam mutex on linux.. @Nopey");
+		g_hMutex = (void*)&g_hMutex;
+		g_hWaitMutex = (void*)&g_hMutex;
+		#elif defined _WIN32
 		g_hMutex = Sys_CreateMutex( "ValvePlatformUIMutex" );
 		g_hWaitMutex = Sys_CreateMutex( "ValvePlatformWaitMutex" );
 		if ( g_hMutex == NULL || g_hWaitMutex == NULL || Sys_GetLastError() == SYS_ERROR_INVALID_HANDLE )
@@ -434,6 +465,7 @@ void CGameUI::Start()
 				Sys_EnumWindows(SendShutdownMsgFunc, 1);
 			}
 		}
+		#endif
 
 		// Delay playing the startup music until two frames
 		// this allows cbuf commands that occur on the first frame that may start a map
@@ -460,40 +492,49 @@ bool CGameUI::FindPlatformDirectory(char *platformDir, int bufferSize)
 {
 	platformDir[0] = '\0';
 
-	if ( platformDir[0] == '\0' )
+	// we're not under steam, so setup using path relative to game
+	if ( IsPC() )
 	{
-		// we're not under steam, so setup using path relative to game
-		if ( IsPC() )
+#ifdef __unix__
+		// `/proc/self/exe` points at the hl2_linux executable
+		if (readlink("/proc/self/exe", platformDir, bufferSize))
 		{
-			if ( ::GetModuleFileName( ( HINSTANCE )GetModuleHandle( NULL ), platformDir, bufferSize ) )
+			char *lastslash = strrchr(platformDir, '/');
+			if ( lastslash )
 			{
-				char *lastslash = strrchr(platformDir, '\\'); // this should be just before the filename
-				if ( lastslash )
-				{
-					*lastslash = 0;
-					Q_strncat(platformDir, "\\platform\\", bufferSize, COPY_ALL_CHARACTERS );
-					return true;
-				}
-			}
-		}
-		else
-		{
-			// xbox fetches the platform path from exisiting platform search path
-			// path to executeable is not correct for xbox remote configuration
-			if ( g_pFullFileSystem->GetSearchPath( "PLATFORM", false, platformDir, bufferSize ) )
-			{
-				char *pSeperator = strchr( platformDir, ';' );
-				if ( pSeperator )
-					*pSeperator = '\0';
+				*lastslash = 0;
+				Q_strncat(platformDir, "/platform/", bufferSize, COPY_ALL_CHARACTERS );
 				return true;
 			}
 		}
-
-		Warning( "Unable to determine platform directory\n" );
-		return false;
+#else
+		if ( ::GetModuleFileName( ( HINSTANCE )GetModuleHandle( NULL ), platformDir, bufferSize ) )
+		{
+			char *lastslash = strrchr(platformDir, '\\'); // this should be just before the filename
+			if ( lastslash )
+			{
+				*lastslash = 0;
+				Q_strncat(platformDir, "\\platform\\", bufferSize, COPY_ALL_CHARACTERS );
+				return true;
+			}
+		}
+#endif
+	}
+	else
+	{
+		// xbox fetches the platform path from exisiting platform search path
+		// path to executeable is not correct for xbox remote configuration
+		if ( g_pFullFileSystem->GetSearchPath( "PLATFORM", false, platformDir, bufferSize ) )
+		{
+			char *pSeperator = strchr( platformDir, ';' );
+			if ( pSeperator )
+				*pSeperator = '\0';
+			return true;
+		}
 	}
 
-	return (platformDir[0] != 0);
+	Warning( "Unable to determine platform directory\n" );
+	return false;
 }
 
 //-----------------------------------------------------------------------------
@@ -509,6 +550,9 @@ void CGameUI::Shutdown()
 
 	ModInfo().FreeModInfo();
 	
+	#ifdef __unix__
+	Msg("TODO: Sorry! steam mutex on linux.. @Nopey");
+	#elif defined _WIN32
 	// release platform mutex
 	// close the mutex
 	if (g_hMutex)
@@ -519,6 +563,7 @@ void CGameUI::Shutdown()
 	{
 		Sys_ReleaseMutex(g_hWaitMutex);
 	}
+	#endif
 
 	steamapicontext->Clear();
 #ifndef _X360
@@ -649,16 +694,25 @@ void CGameUI::RunFrame()
 	if ( IsPC() && m_bTryingToLoadFriends && m_iFriendsLoadPauseFrames-- < 1 && g_hMutex && g_hWaitMutex )
 	{
 		// try and load Steam platform files
+
+		#ifdef __unix__
+		Msg("TODO: Sorry! steam mutex on linux.. @Nopey");
+		#elif defined _WIN32
 		unsigned int waitResult = Sys_WaitForSingleObject(g_hMutex, 0);
 		if (waitResult == SYS_WAIT_OBJECT_0 || waitResult == SYS_WAIT_ABANDONED)
+		#endif
 		{
 			// we got the mutex, so load Friends/Serverbrowser
 			// clear the loading flag
 			m_bTryingToLoadFriends = false;
 			g_VModuleLoader.LoadPlatformModules(&m_GameFactory, 1, false);
 
+			#ifdef __unix__
+			Msg("TODO: Sorry! steam mutex on linux.. @Nopey");
+			#elif defined _WIN32
 			// release the wait mutex
 			Sys_ReleaseMutex(g_hWaitMutex);
+			#endif
 
 			// notify the game of our game name
 			const char *fullGamePath = engine->GetGameDirectory();

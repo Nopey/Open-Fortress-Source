@@ -261,7 +261,7 @@ void Addons::Activate()
 
 	m_GplAddons->RemoveAllPanelItems();
 	m_addonInfoList.RemoveAll();
-	m_pAddonList ? m_pAddonList->deleteThis() : NULL;
+	if (m_pAddonList) m_pAddonList->deleteThis();
 
 	//
 	// Get the list of addons

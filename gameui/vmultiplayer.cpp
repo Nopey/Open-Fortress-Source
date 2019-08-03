@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2008, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2008, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -432,7 +432,7 @@ void Multiplayer::OnCommand(const char *command)
 		}
 		else
 		{
-			char *pchCustomPath = ( ( m_nSpraypaint[ iLogo ].m_bCustom ) ? ( MULTIPLAYER_CUSTOM_SPRAY_FOLDER ) : ( "" ) );
+			char const *pchCustomPath = ( ( m_nSpraypaint[ iLogo ].m_bCustom ) ? ( MULTIPLAYER_CUSTOM_SPRAY_FOLDER ) : ( "" ) );
 
 			char rootFilename[MAX_PATH];
 			Q_snprintf( rootFilename, sizeof(rootFilename), MULTIPLAYER_SPRAY_FOLDER "%s%s.vtf", pchCustomPath, m_nSpraypaint[ iLogo ].m_szFilename );

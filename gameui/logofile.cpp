@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -6,11 +6,12 @@
 //
 //=============================================================================//
 
-#if !defined( _X360 )
+#if defined( _WIN32 )
 #include <windows.h>
 #endif
 #include <stdio.h>
-#include "UtlBuffer.h"
+#include <cstdint>
+#include "utlbuffer.h"
 #include <vgui/VGUI.h>
 #include <vgui_controls/Controls.h>
 #include "FileSystem.h"
@@ -78,7 +79,7 @@ filename MIP x y width height
 must be multiples of sixteen
 ==============
 */
-int GrabMip ( HANDLE hdib, unsigned char *lump_p, char *lumpname, COLORREF crf, int *width, int *height)
+int GrabMip ( HANDLE hdib, unsigned char *lump_p, char *lumpname, uint32_t crf, int *width, int *height)
 {
 	int             i,x,y,xl,yl,xh,yh,w,h;
 	unsigned char   *screen_p, *source;
@@ -203,7 +204,7 @@ void UpdateLogoWAD( void *phdib, int r, int g, int b )
 	pszName = &logoname[ 0 ];
 
 	HANDLE hdib = (HANDLE)phdib;
-	COLORREF crf = RGB( r, g, b );
+	uint32_t crf = RGB( r, g, b );
 
 	if ((!pszName) || (pszName[0] == 0) || (hdib == NULL))
 		return;

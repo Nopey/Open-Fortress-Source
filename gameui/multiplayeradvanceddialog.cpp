@@ -20,8 +20,8 @@
 #include <vgui_controls/CheckButton.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/TextEntry.h>
-#include "PanelListPanel.h"
-#include "ScriptObject.h"
+#include "panellistpanel.h"
+#include "scriptobject.h"
 #include <vgui/IInput.h>
 
 #include "FileSystem.h"

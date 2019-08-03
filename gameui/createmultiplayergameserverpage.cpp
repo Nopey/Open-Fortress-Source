@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -140,8 +140,7 @@ void CCreateMultiplayerGameServerPage::LoadMaps( const char *pszPathID )
 	KeyValues *hiddenMaps = ModInfo().GetHiddenMaps();
 
 	const char *pszFilename = g_pFullFileSystem->FindFirst( "maps/*.bsp", &findHandle );
-	while ( pszFilename )
-	{
+	if (pszFilename) do{
 		char mapname[256];
 
 		// FindFirst ignores the pszPathID, so check it here
@@ -149,7 +148,7 @@ void CCreateMultiplayerGameServerPage::LoadMaps( const char *pszPathID )
 		Q_snprintf( mapname, sizeof(mapname), "maps/%s", pszFilename );
 		if ( !g_pFullFileSystem->FileExists( mapname, pszPathID ) )
 		{
-			goto nextFile;
+			continue;
 		}
 
 		// remove the text 'maps/' and '.bsp' from the file name to get the map name
@@ -173,7 +172,7 @@ void CCreateMultiplayerGameServerPage::LoadMaps( const char *pszPathID )
 		// this needs to be specified in a seperate file
 		if ( !stricmp( ModInfo().GetGameName(), "Half-Life" ) && ( mapname[0] == 'c' || mapname[0] == 't') && mapname[2] == 'a' && mapname[1] >= '0' && mapname[1] <= '5' )
 		{
-			goto nextFile;
+			continue;
 		}
 
 		// strip out maps that shouldn't be displayed
@@ -181,17 +180,13 @@ void CCreateMultiplayerGameServerPage::LoadMaps( const char *pszPathID )
 		{
 			if ( hiddenMaps->GetInt( mapname, 0 ) )
 			{
-				goto nextFile;
+				continue;
 			}
 		}
 
 		// add to the map list
 		m_pMapList->AddItem( mapname, new KeyValues( "data", "mapname", mapname ) );
-
-		// get the next file
-	nextFile:
-		pszFilename = g_pFullFileSystem->FindNext( findHandle );
-	}
+	} while ( ( pszFilename = g_pFullFileSystem->FindNext( findHandle ) ) );
 	g_pFullFileSystem->FindClose( findHandle );
 }
 

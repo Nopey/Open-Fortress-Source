@@ -1,4 +1,4 @@
-//===== Copyright © 1996-2005, Valve Corporation, All rights reserved. ======//
+//===== Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ======//
 //
 // Purpose: 
 //
@@ -14,6 +14,9 @@
 #include <vgui_controls/Label.h>
 #include "FileSystem.h"
 #include "tier1/convar.h"
+
+#define __our_max(a, b) ((a>b)?a:b)
+#define __our_min(a, b) ((a<b)?a:b)
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -333,9 +336,9 @@ void CScriptObject::WriteToFile( FileHandle_t fp )
 	case O_NUMBER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = __our_max( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = __our_min( fVal, fMax );
 		g_pFullFileSystem->FPrintf( fp, "\"%f\"\r\n", fVal );
 		break;
 	case O_STRING:
@@ -365,9 +368,9 @@ void CScriptObject::WriteToFile( FileHandle_t fp )
 	case O_SLIDER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = __our_max( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = __our_min( fVal, fMax );
 		g_pFullFileSystem->FPrintf( fp, "\"%f\"\r\n", fVal );
 		break;
 	}
@@ -395,9 +398,9 @@ void CScriptObject::WriteToConfig( void )
 	case O_NUMBER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = __our_max( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = __our_min( fVal, fMax );
 		Q_snprintf( szValue, sizeof( szValue ), "%f", fVal );
 		break;
 	case O_STRING:
@@ -427,9 +430,9 @@ void CScriptObject::WriteToConfig( void )
 	case O_SLIDER:
 		fVal = fcurValue;
 		if ( fMin != -1.0 )
-			fVal = __max( fVal, fMin );
+			fVal = __our_max( fVal, fMin );
 		if ( fMax != -1.0 )
-			fVal = __min( fVal, fMax );
+			fVal = __our_min( fVal, fMax );
 		Q_snprintf( szValue, sizeof( szValue ), "%f", fVal );
 		break;
 	}

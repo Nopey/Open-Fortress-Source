@@ -109,7 +109,7 @@ void CheckButton::ApplySchemeSettings(IScheme *pScheme)
 	Color bgDepressedColor = GetSchemeColor( "CheckButton.DepressedBgColor", Color(62, 70, 55, 255), pScheme); 
 	SetDepressedColor( GetFgColor(), bgDepressedColor );
 
-	_highlightFgColor = GetSchemeColor( "CheckButton.HighlightFgColor", Color(62, 70, 55, 255), pScheme); 
+	_highlightFgColor = GetSchemeColor( "CheckButton.highlightFgColor", Color(62, 70, 55, 255), pScheme); 
 
 	SetContentAlignment(Label::a_west);
 

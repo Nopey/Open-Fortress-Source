@@ -15,7 +15,7 @@
 #include <vgui/IInput.h>
 #include <vgui/IScheme.h>
 #include <vgui/ISurface.h>
-#include "PanelListPanel.h"
+#include "panellistpanel.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

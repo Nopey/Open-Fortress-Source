@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2008, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2008, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -61,6 +61,7 @@ void AddonAssociation::OnThink()
 }
 
 //=============================================================================
+#ifdef _WIN32
 static void GetAddonInstallerUtilityPath( char path[MAX_PATH] )
 {
 	char p[MAX_PATH];
@@ -71,6 +72,20 @@ static void GetAddonInstallerUtilityPath( char path[MAX_PATH] )
 
 	Q_strncpy( path, p, MAX_PATH );
 }
+#else
+static void GetAddonInstallerUtilityPath( char path[MAX_PATH] )
+{
+	path[0] = '\0';
+	/*char p[MAX_PATH];
+	readlink("/proc/self/exe", p, MAX_PATH)
+	Q_StripLastDir( p, sizeof( p ) );	// Get rid of the filename.
+	Q_StripTrailingSlash( p );
+	// file doesn't exist?
+	Q_strncat( p, "/bin/addoninstaller", sizeof( p ) );
+
+	Q_strncpy( path, p, MAX_PATH ); */
+}
+#endif
 
 //=============================================================================
 static void RegisterAssocation( bool showFailure )

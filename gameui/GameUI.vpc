@@ -100,6 +100,10 @@ $Project "GameUI"
 		$File	"$SRCDIR\game\client\vgui_video_player.h"
 		$File	"$SRCDIR\game\client\vgui_video_player.cpp"
 
+		$File	"$SRCDIR\game\client\particles_new.h"
+
+		$File	"particles_linkerfix.cpp" [$POSIX]
+
 		$File	"nb_button.h"
 		$File	"nb_button.cpp"
 		$File	"nb_header_footer.h"
@@ -192,7 +196,6 @@ $Project "GameUI"
 				"labeledcommandcombobox.cpp" \
 				"loadingdialog.cpp" \
 				"loadingtippanel.cpp" \
-				"logofile.cpp" \
 				"modinfo.cpp" \
 				"mousemessageforwardingpanel.cpp" \
 				"multiplayeradvanceddialog.cpp" \
@@ -210,7 +213,7 @@ $Project "GameUI"
 				"playerlistdialog.cpp" \
 				"rungameengine.cpp" \
 				"scriptobject.cpp" \
-				"sys_utils.cpp" \
+				"sys_utils.cpp" [$WIN32] \
 				"textentrybox.cpp" \
 				"urlbutton.cpp" \
 				"vcontrolslistpanel.cpp" \
@@ -260,7 +263,21 @@ $Project "GameUI"
 		$File	"$SRCDIR\common\language.h"
 	}
 	
-	$Folder	"Link Libraries" [$WIN32]
+	$Folder	"Link Libraries"
+	{
+		$Lib	hllib
+		$Lib	bitmap
+		$Lib	jpeglib
+		$Lib	mathlib
+		$Lib	tier2
+		$Lib	tier3
+		$Lib	dmxloader
+		$Lib	vgui_controls
+		$Lib	matsys_controls
+		$Lib	vtf
+		$ImpLib steam_api
+	}
+	/*$Folder	"Link Libraries" [$WIN32]
 	{
 		$File	"$SRCDIR\lib\public\HLLib.lib"
 		$File	"$SRCDIR\lib\public\bitmap.lib"
@@ -273,5 +290,5 @@ $Project "GameUI"
 		$File	"$SRCDIR\lib\public\matsys_controls.lib"
 		$File	"$SRCDIR\lib\public\vtf.lib"
 		$ImpLib "$SRCDIR\lib\public\steam_api"
-	}
+	}*/
 }

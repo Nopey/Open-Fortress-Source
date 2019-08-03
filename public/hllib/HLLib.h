@@ -1,7 +1,8 @@
 /*
  * HLLib
  * Copyright (C) 2006-2013 Ryan Gregg
-
+ * Copyright (C) 2014 Mathias Panzenböck
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -40,19 +41,23 @@ typedef signed int			hlInt;
 typedef unsigned int		hlUInt;
 typedef signed long			hlLong;
 typedef unsigned long		hlULong;
-typedef signed long long	hlLongLong;
-typedef unsigned long long	hlULongLong;
 typedef float				hlSingle;
 typedef double				hlDouble;
 typedef void				hlVoid;
 
 #ifdef _MSC_VER
+	typedef signed long long	hlLongLong;
+	typedef unsigned long long	hlULongLong;
 	typedef unsigned __int8		hlUInt8;
 	typedef unsigned __int16	hlUInt16;
 	typedef unsigned __int32	hlUInt32;
 	typedef unsigned __int64	hlUInt64;
 #else
 #	include <stdint.h>
+
+	// long long is not in the C++ standard
+	typedef int64_t		hlLongLong;
+	typedef uint64_t	hlULongLong;
 
 	typedef uint8_t		hlUInt8;
 	typedef uint16_t	hlUInt16;
@@ -65,8 +70,8 @@ typedef hlSingle		hlFloat;
 #define hlFalse			0
 #define hlTrue			1
 
-#define HL_VERSION_NUMBER	((2 << 24) | (4 << 16) | (6 << 8) | 0)
-#define HL_VERSION_STRING	"2.4.6"
+#define HL_VERSION_NUMBER	((2 << 24) | (4 << 16) | (5 << 8) | 0)
+#define HL_VERSION_STRING	"2.4.5"
 
 #define HL_ID_INVALID 0xffffffff
 
@@ -582,6 +587,8 @@ HLLIB_API hlBool hlWADFileGetImageData(const HLDirectoryItem *pFile, hlUInt *uiW
 
 #ifdef __cplusplus
 
+#undef min
+#undef max
 #	include <list>
 
 namespace HLLib
@@ -1313,6 +1320,19 @@ namespace HLLib
 	private:
 		hlBool Open(Streams::IStream *pStream, hlUInt uiMode, hlBool bDeleteStream);
 		hlBool Open(Mapping::CMapping *pMapping, hlUInt uiMode, hlBool bDeleteMapping);
+		
+	public:
+		static CPackage *AutoOpen(Streams::IStream &Stream, hlUInt uiMode);
+		static CPackage *AutoOpen(Mapping::CMapping &Mapping, hlUInt uiMode);
+		static CPackage *AutoOpen(const hlChar *lpFileName, hlUInt uiMode);
+		static CPackage *AutoOpen(hlVoid *lpData, hlUInt uiBufferSize, hlUInt uiMode);
+		static CPackage *AutoOpen(hlVoid *pUserData, hlUInt uiMode);
+		
+		static CPackage *Open(Streams::IStream &Stream, hlUInt uiMode, HLPackageType ePackageType);
+		static CPackage *Open(Mapping::CMapping &Mapping, hlUInt uiMode, HLPackageType ePackageType);
+		static CPackage *Open(const hlChar *lpFileName, hlUInt uiMode, HLPackageType ePackageType);
+		static CPackage *Open(hlVoid *lpData, hlUInt uiBufferSize, hlUInt uiMode, HLPackageType ePackageType);
+		static CPackage *Open(hlVoid *pUserData, hlUInt uiMode, HLPackageType ePackageType);
 	};
 
 	//
@@ -1885,7 +1905,7 @@ namespace HLLib
 	// CSGAFile
 	//
 
-	class HLLIB_API CSGAFile : public CPackage
+class HLLIB_API CSGAFile : public CPackage
 	{
 	private:
 		#pragma pack(1)
@@ -1999,7 +2019,7 @@ namespace HLLib
 			VERIFICATION_CRC_BLOCKS,
 			VERIFICATION_MD5_BLOCKS,
 			VERIFICATION_SHA1_BLOCKS,
-			VERIFICATION_COUNT,
+			VERIFICATION_COUNT
 		};
 
 		#pragma pack()
@@ -2031,11 +2051,11 @@ namespace HLLib
 		class CSGASpecializedDirectory : public ISGADirectory
 		{
 		public:
-			typedef typename TSGAHeader SGAHeader;
-			typedef typename TSGADirectoryHeader SGADirectoryHeader;
-			typedef typename TSGASection SGASection;
-			typedef typename TSGAFolder SGAFolder;
-			typedef typename TSGAFile SGAFile;
+			typedef TSGAHeader SGAHeader;
+			typedef TSGADirectoryHeader SGADirectoryHeader;
+			typedef TSGASection SGASection;
+			typedef TSGAFolder SGAFolder;
+			typedef TSGAFile SGAFile;
 
 			CSGASpecializedDirectory(CSGAFile& File);
 
@@ -2060,10 +2080,10 @@ namespace HLLib
 		class CSGASpecializedDirectory<TSGAHeader, TSGADirectoryHeader, TSGASection, TSGAFolder, SGAFile4> : public ISGADirectory
 		{
 		public:
-			typedef typename TSGAHeader SGAHeader;
-			typedef typename TSGADirectoryHeader SGADirectoryHeader;
-			typedef typename TSGASection SGASection;
-			typedef typename TSGAFolder SGAFolder;
+			typedef TSGAHeader SGAHeader;
+			typedef TSGADirectoryHeader SGADirectoryHeader;
+			typedef TSGASection SGASection;
+			typedef TSGAFolder SGAFolder;
 			typedef CSGAFile::SGAFile4 SGAFile;
 
 			CSGASpecializedDirectory(CSGAFile& File);
@@ -2089,10 +2109,10 @@ namespace HLLib
 		class CSGASpecializedDirectory<TSGAHeader, TSGADirectoryHeader, TSGASection, TSGAFolder, SGAFile6> : public ISGADirectory
 		{
 		public:
-			typedef typename TSGAHeader SGAHeader;
-			typedef typename TSGADirectoryHeader SGADirectoryHeader;
-			typedef typename TSGASection SGASection;
-			typedef typename TSGAFolder SGAFolder;
+			typedef TSGAHeader SGAHeader;
+			typedef TSGADirectoryHeader SGADirectoryHeader;
+			typedef TSGASection SGASection;
+			typedef TSGAFolder SGAFolder;
 			typedef CSGAFile::SGAFile6 SGAFile;
 
 			CSGASpecializedDirectory(CSGAFile& File);
@@ -2144,10 +2164,10 @@ namespace HLLib
 		typedef CSGADirectory<SGAHeader6, SGADirectoryHeader5, SGASection5, SGAFolder5, SGAFile6> CSGADirectory6;
 		typedef CSGADirectory<SGAHeader6, SGADirectoryHeader7, SGASection5, SGAFolder5, SGAFile7> CSGADirectory7;
 
-		friend CSGADirectory4;
-		friend CSGADirectory5;
-		friend CSGADirectory6;
-		friend CSGADirectory7;
+		friend class CSGADirectory<SGAHeader4, SGADirectoryHeader4, SGASection4, SGAFolder4, SGAFile4>;
+		friend class CSGADirectory<SGAHeader4, SGADirectoryHeader5, SGASection5, SGAFolder5, SGAFile4>;
+		friend class CSGADirectory<SGAHeader6, SGADirectoryHeader5, SGASection5, SGAFolder5, SGAFile6>;
+		friend class CSGADirectory<SGAHeader6, SGADirectoryHeader7, SGASection5, SGAFolder5, SGAFile7>;
 
 	private:
 		static const char *lpAttributeNames[];

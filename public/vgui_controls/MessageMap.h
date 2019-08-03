@@ -135,6 +135,7 @@ struct MessageMapItem_t
 #if defined( VGUI_USEKEYBINDINGMAPS )
 
 #define DECLARE_CLASS_SIMPLE( className, baseClassName ) \
+protected: \
 	typedef baseClassName BaseClass; \
 	typedef className ThisClass;	\
 public:								\
