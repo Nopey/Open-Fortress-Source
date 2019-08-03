@@ -14,17 +14,17 @@
 #include "vgenericconfirmation.h"
 #include "vaddons.h"
 //#include "VQuickJoin.h"
-//#include "basemodpanel.h"
+//#include "BaseModPanel.h"
 //#include "UIGameData.h"
-//#include "VGameSettings.h"
+//#include "vgamesettings.h"
 //#include "VSteamCloudConfirmation.h"
 #include "vaddonassociation.h"
 
 //#include "VSignInDialog.h"
-#include "VGuiSystemModuleLoader.h"
-//#include "VAttractScreen.h"
+#include "vguisystemmoduleloader.h"
+//#include "vattractscreen.h"
 #include "gamemodes.h"
-#include "FileSystem.h"
+#include "filesystem.h"
 
 #include "vgui/ILocalize.h"
 #include "vgui_controls/Label.h"
@@ -41,6 +41,7 @@
 #include "vgui/ISurface.h"
 #include "tier0/icommandline.h"
 #include "fmtstr.h"
+#include "UI_Shared.h"
 
 #include "../game/shared/hl2ce/steamworks_stuff.h"
 

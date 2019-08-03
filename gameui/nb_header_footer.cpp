@@ -4,7 +4,7 @@
 #include "vgui_controls/ImagePanel.h"
 #include <vgui/ISurface.h>
 #include "vgui_video_player.h"
-#include "VGUIMatSurface/IMatSystemSurface.h"
+#include "VGuiMatSurface/IMatSystemSurface.h"
 #include "engineinterface.h"
 #include "BaseModPanel.h"
 

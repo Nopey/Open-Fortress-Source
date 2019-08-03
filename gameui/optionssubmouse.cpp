@@ -5,14 +5,14 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#include "OptionsSubMouse.h"
-//#include "CommandCheckButton.h"
-#include "KeyToggleCheckButton.h"
-#include "CvarNegateCheckButton.h"
-#include "CvarToggleCheckButton.h"
-#include "CvarSlider.h"
+#include "optionssubmouse.h"
+//#include "commandcheckbutton.h"
+#include "keytogglecheckbutton.h"
+#include "cvarnegatecheckbutton.h"
+#include "cvartogglecheckbutton.h"
+#include "cvarslider.h"
 
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include <KeyValues.h>
 #include <vgui/IScheme.h>

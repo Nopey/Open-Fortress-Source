@@ -10,7 +10,7 @@
 #pragma once
 #endif
 
-#include "OptionsDialog.h"
+#include "optionsdialog.h"
 
 class CControllerDialog : public COptionsDialog
 {

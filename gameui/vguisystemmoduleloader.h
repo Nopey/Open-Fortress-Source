@@ -11,7 +11,7 @@
 #endif
 
 #include "vgui_controls/PHandle.h"
-#include "UtlVector.h"
+#include "utlvector.h"
 #include "IVGuiModuleLoader.h"
 
 class IVGuiModule;

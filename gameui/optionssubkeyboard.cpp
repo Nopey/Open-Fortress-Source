@@ -5,9 +5,9 @@
 //===========================================================================//
 
 
-#include "OptionsSubKeyboard.h"
-#include "EngineInterface.h"
-#include "VControlsListPanel.h"
+#include "optionssubkeyboard.h"
+#include "engineinterface.h"
+#include "vcontrolslistpanel.h"
 
 #include <vgui_controls/Button.h>
 #include <vgui_controls/Label.h>
@@ -24,9 +24,9 @@
 #include <vgui/ISystem.h>
 #include <vgui/IInput.h>
 
-#include "FileSystem.h"
-#include "tier1/UtlBuffer.h"
-#include "igameuifuncs.h"
+#include "filesystem.h"
+#include "tier1/utlbuffer.h"
+#include "IGameUIFuncs.h"
 #include <vstdlib/IKeyValuesSystem.h>
 #include "tier2/tier2.h"
 #include "inputsystem/iinputsystem.h"

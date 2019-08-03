@@ -2,8 +2,8 @@
 #define __VMYUGC_H__
 
 #include "basemodui.h"
-#include "VGenericPanelList.h"
-#include <vgui_controls/imagepanel.h>
+#include "vgenericpanellist.h"
+#include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/TextEntry.h>
 #include <vgui_controls/FileOpenDialog.h>
 #include <vgui_controls/MessageBox.h>

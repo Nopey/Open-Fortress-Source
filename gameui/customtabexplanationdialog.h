@@ -11,7 +11,7 @@
 #endif
 
 #include "vgui_controls/Frame.h"
-#include "UtlVector.h"
+#include "utlvector.h"
 #include <vgui/KeyCode.h>
 #include "vgui_controls/URLLabel.h"
 

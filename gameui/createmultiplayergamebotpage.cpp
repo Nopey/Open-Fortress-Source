@@ -6,7 +6,7 @@
 //
 //=============================================================================//
 
-#include "CreateMultiplayerGameBotPage.h"
+#include "createmultiplayergamebotpage.h"
 
 using namespace vgui;
 
@@ -20,8 +20,8 @@ using namespace vgui;
 #include "panellistpanel.h"
 #include "scriptobject.h"
 #include "tier1/convar.h"
-#include "EngineInterface.h"
-#include "CvarToggleCheckButton.h"
+#include "engineinterface.h"
+#include "cvartogglecheckbutton.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include <tier0/memdbgon.h>

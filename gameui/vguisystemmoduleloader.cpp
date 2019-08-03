@@ -6,16 +6,12 @@
 
 #include <stdio.h>
 
-<<<<<<< HEAD
-#include "VGuiSystemModuleLoader.h"
-#include "Sys_Utils.h"
-=======
+
 #ifdef _WIN32
 #include "sys_utils.h"
 #endif
 
 #include "vguisystemmoduleloader.h"
->>>>>>> 20120e0e... More Linux: GameUI
 #include "IVGuiModule.h"
 #include "ServerBrowser/IServerBrowser.h"
 
@@ -28,7 +24,7 @@
 #include <vgui_controls/Controls.h>
 #include <vgui_controls/Panel.h>
 
-#include "FileSystem.h"
+#include "filesystem.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

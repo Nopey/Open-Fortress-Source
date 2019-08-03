@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright ï¿½ 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "MultiplayerAdvancedDialog.h"
+#include "multiplayeradvanceddialog.h"
 
 #include <vgui/ILocalize.h>
 #include <vgui/ISurface.h>
@@ -24,7 +24,7 @@
 #include "scriptobject.h"
 #include <vgui/IInput.h>
 
-#include "FileSystem.h"
+#include "filesystem.h"
 
 
 // memdbgon must be the last include file in a .cpp file!!!

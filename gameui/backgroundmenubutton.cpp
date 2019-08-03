@@ -5,7 +5,7 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "BackgroundMenuButton.h"
+#include "backgroundmenubutton.h"
 
 #include <KeyValues.h>
 #include <vgui/IImage.h>

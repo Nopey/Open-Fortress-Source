@@ -7,13 +7,13 @@
 
 #include "cbase.h"
 #include "BonusMapsDialog.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include "vgui/ISystem.h"
 #include "vgui/ISurface.h"
 #include "vgui/IVGui.h"
 #include <vgui/ILocalize.h>
-#include "FileSystem.h"
+#include "filesystem.h"
 
 #include "vgui_controls/Button.h"
 #include "vgui_controls/ComboBox.h"
@@ -24,9 +24,9 @@
 #include "vgui_controls/FileOpenDialog.h"
 
 #include "TGAImagePanel.h"
-#include "MouseMessageForwardingPanel.h"
+#include "mousemessageforwardingpanel.h"
 
-#include "basemodpanel.h"
+#include "BaseModPanel.h"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"

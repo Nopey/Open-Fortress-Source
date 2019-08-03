@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "basemodpanel.h"
+#include "BaseModPanel.h"
 inline BaseModUI::CBaseModPanel * BasePanel() { return &BaseModUI::CBaseModPanel::GetSingleton(); }
 
 #endif // BASEPANEL_H

@@ -7,13 +7,13 @@
 
 #include "cbase.h"
 #include "LoadGameDialog.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include "vgui/ISystem.h"
 #include "vgui/ISurface.h"
 #include "vgui/IVGui.h"
 #include "KeyValues.h"
-#include "FileSystem.h"
+#include "filesystem.h"
 
 #include "vgui_controls/Button.h"
 #include "vgui_controls/PanelListPanel.h"

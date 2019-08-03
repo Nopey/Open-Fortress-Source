@@ -1,6 +1,6 @@
 #include "cbase.h"
 #include "UIGameData.h"
-#include "VGenericConfirmation.h"
+#include "vgenericconfirmation.h"
 
 //setup in GameUI_Interface.cpp
 extern const char *COM_GetModDirectory( void );

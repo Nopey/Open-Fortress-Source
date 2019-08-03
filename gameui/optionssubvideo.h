@@ -14,9 +14,9 @@
 #include <vgui_controls/Panel.h>
 #include <vgui_controls/ComboBox.h>
 #include <vgui_controls/PropertyPage.h>
-#include "EngineInterface.h"
-#include "igameuifuncs.h"
-#include "URLButton.h"
+#include "engineinterface.h"
+#include "IGameUIFuncs.h"
+#include "urlbutton.h"
 
 class CCvarSlider;
 

@@ -8,10 +8,10 @@
 #ifdef IS_WINDOWS_PC
 #include "windows.h"
 #endif
-#include "VAddonAssociation.h"
-#include "VGenericConfirmation.h"
+#include "vaddonassociation.h"
+#include "vgenericconfirmation.h"
 
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include "vgui_controls/Label.h"
 #include "vgui/ISurface.h"

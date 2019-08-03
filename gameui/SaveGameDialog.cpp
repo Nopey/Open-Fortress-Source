@@ -7,8 +7,8 @@
 
 #include "cbase.h"
 #include "SaveGameDialog.h"
-#include "EngineInterface.h"
-#include "GameUI_Interface.h"
+#include "engineinterface.h"
+#include "gameui_interface.h"
 
 #include "vgui/ISystem.h"
 #include "vgui/ISurface.h"
@@ -19,7 +19,7 @@
 #include "vgui_controls/QueryBox.h"
 
 #include "KeyValues.h"
-#include "FileSystem.h"
+#include "filesystem.h"
 
 #include <stdio.h>
 #include <stdlib.h>

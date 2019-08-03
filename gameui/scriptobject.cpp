@@ -7,12 +7,12 @@
 //===========================================================================//
 // CScriptObject and CDescription class definitions
 // 
-#include "ScriptObject.h"
+#include "scriptobject.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "EngineInterface.h"
+#include "engineinterface.h"
 #include <vgui_controls/Label.h>
-#include "FileSystem.h"
+#include "filesystem.h"
 #include "tier1/convar.h"
 
 #define __our_max(a, b) ((a>b)?a:b)

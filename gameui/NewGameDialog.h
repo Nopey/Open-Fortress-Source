@@ -13,7 +13,7 @@
 
 #include "vgui_controls/Frame.h"
 #include "vgui_controls/KeyRepeat.h"
-#include "UtlVector.h"
+#include "utlvector.h"
 
 class CGameChapterPanel;
 class CSkillSelectionDialog;

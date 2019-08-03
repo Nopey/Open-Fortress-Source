@@ -5,7 +5,7 @@
 //=====================================================================================//
 
 #include "cbase.h"
-#include "VGenericConfirmation.h"
+#include "vgenericconfirmation.h"
 
 #include "vgui_controls/Label.h"
 #include "vgui/ISurface.h"

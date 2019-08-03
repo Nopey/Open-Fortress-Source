@@ -7,18 +7,18 @@
 
 #include "cbase.h"
 #include "BonusMapsDatabase.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include "tier1/convar.h"
-#include "tier1/UtlBuffer.h"
+#include "tier1/utlbuffer.h"
 
-#include "FileSystem.h"
-#include "ModInfo.h"
-#include "EngineInterface.h"
+#include "filesystem.h"
+#include "modinfo.h"
+#include "engineinterface.h"
 #include "ixboxsystem.h"
 #include "KeyValues.h"
 #include "basepanel.h"
-#include "GameUI_Interface.h"
+#include "gameui_interface.h"
 #include "BonusMapsDialog.h"
 
 // memdbgon must be the last include file in a .cpp file!!!

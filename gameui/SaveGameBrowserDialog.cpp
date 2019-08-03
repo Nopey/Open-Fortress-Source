@@ -5,8 +5,8 @@
 //=============================================================================//
 
 #include "cbase.h"
-#include "BasePanel.h"
-#include "SavegameDialog.h"
+#include "basepanel.h"
+#include "SaveGameDialog.h"
 
 #include "winlite.h"		// FILETIME
 #include "vgui/ILocalize.h"
@@ -18,9 +18,9 @@
 #include "vgui_controls/ImagePanel.h"
 #include "filesystem.h"
 #include "KeyValues.h"
-#include "ModInfo.h"
-#include "EngineInterface.h"
-#include "GameUI_Interface.h"
+#include "modinfo.h"
+#include "engineinterface.h"
+#include "gameui_interface.h"
 #include "vstdlib/random.h"
 
 #include "SaveGameBrowserDialog.h"

@@ -11,10 +11,10 @@
 #pragma once
 #endif
 
-#include "BaseSaveGameDialog.h"
+#include "basesavegamedialog.h"
 #include "SaveGameDialog.h"
 #include "SaveGameBrowserDialog.h"
-#include "BasePanel.h"
+#include "basepanel.h"
 #include "vgui_controls/KeyRepeat.h"
 
 //-----------------------------------------------------------------------------

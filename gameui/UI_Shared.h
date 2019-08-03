@@ -8,7 +8,7 @@
 #define __UI_SHARED_H__
 
 #include "basemodui.h"
-#include "VFlyoutMenu.h"
+#include "vflyoutmenu.h"
 
 const char *GetRandomQuitString();
 

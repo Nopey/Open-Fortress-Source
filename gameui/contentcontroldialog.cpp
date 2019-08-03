@@ -12,9 +12,9 @@
 #include <windows.h>
 #endif
 
-#include "ContentControlDialog.h"
+#include "contentcontroldialog.h"
 #include "checksum_md5.h"
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include <vgui/IInput.h>
 #include <vgui/ISystem.h>

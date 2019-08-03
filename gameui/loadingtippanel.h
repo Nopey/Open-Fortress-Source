@@ -10,9 +10,9 @@
 #pragma once
 #endif
 
-#include "vgui_controls/imagepanel.h"
-#include "vgui_controls/editablepanel.h"
-#include "vgui_controls/label.h"
+#include "vgui_controls/ImagePanel.h"
+#include "vgui_controls/EditablePanel.h"
+#include "vgui_controls/Label.h"
 
 #define MAX_TIP_LENGTH 64
 

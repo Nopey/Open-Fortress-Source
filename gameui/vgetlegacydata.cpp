@@ -7,8 +7,8 @@
 #include "cbase.h"
 #include <tier0/platform.h>
 #include "vgetlegacydata.h"
-#include "VGenericConfirmation.h"
-#include "EngineInterface.h"
+#include "vgenericconfirmation.h"
+#include "engineinterface.h"
 #include "vgui_controls/Label.h"
 #include "vgui/ISurface.h"
 

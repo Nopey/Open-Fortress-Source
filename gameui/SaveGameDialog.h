@@ -11,7 +11,7 @@
 #pragma once
 #endif
 
-#include "BaseSaveGameDialog.h"
+#include "basesavegamedialog.h"
 #include "SaveGameBrowserDialog.h"
 #include "vgui_controls/KeyRepeat.h"
 

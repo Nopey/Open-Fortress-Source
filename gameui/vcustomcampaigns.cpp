@@ -5,13 +5,13 @@
 //=====================================================================================//
 
 #include "cbase.h"
-#include "VCustomCampaigns.h"
-#include "VGenericPanelList.h"
+#include "vcustomcampaigns.h"
+#include "vgenericpanellist.h"
 #include "KeyValues.h"
-#include "VFooterPanel.h"
-#include "VHybridButton.h"
-#include "EngineInterface.h"
-#include "FileSystem.h"
+#include "vfooterpanel.h"
+#include "vhybridbutton.h"
+#include "engineinterface.h"
+#include "filesystem.h"
 #include "fmtstr.h"
 #include "vgui/ISurface.h"
 #include "vgui/IBorder.h"
@@ -23,7 +23,7 @@
 #include "vgui_controls/ProgressBar.h"
 #include "vgui_controls/Label.h"
 #include "vgui_controls/TextImage.h"
-#include "UtlBuffer.h"
+#include "utlbuffer.h"
 #include "vgetlegacydata.h"
 
 // use the JPEGLIB_USE_STDIO define so that we can read in jpeg's from outside the game directory tree.  For Spray Import.

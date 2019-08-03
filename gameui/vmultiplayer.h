@@ -9,7 +9,7 @@
 
 
 #include "basemodui.h"
-#include "VFlyoutMenu.h"
+#include "vflyoutmenu.h"
 
 
 #define MAX_SPRAYPAINT_LOGOS 17

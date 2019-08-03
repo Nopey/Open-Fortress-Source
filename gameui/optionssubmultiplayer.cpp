@@ -14,8 +14,8 @@
 #include <compat_posix.h>
 #endif
 
-#include "OptionsSubMultiplayer.h"
-#include "MultiplayerAdvancedDialog.h"
+#include "optionssubmultiplayer.h"
+#include "multiplayeradvanceddialog.h"
 #include <stdio.h>
 
 #include <vgui_controls/Button.h>
@@ -30,7 +30,7 @@
 #include <vgui_controls/ImagePanel.h>
 #include <vgui_controls/FileOpenDialog.h>
 #include <vgui_controls/MessageBox.h>
-#include <vgui/IVgui.h>
+#include <vgui/IVGui.h>
 #include <vgui/ILocalize.h>
 #include <vgui/IPanel.h>
 #include <vgui_controls/MessageBox.h>
@@ -47,8 +47,8 @@
 #include "tier1/convar.h"
 
 
-#include "materialsystem/IMaterial.h"
-#include "materialsystem/IMesh.h"
+#include "materialsystem/imaterial.h"
+#include "materialsystem/imesh.h"
 #include "materialsystem/imaterialvar.h"
 
 // use the JPEGLIB_USE_STDIO define so that we can read in jpeg's from outside the game directory tree.  For Spray Import.

@@ -5,14 +5,14 @@
 // $NoKeywords: $
 //=============================================================================//
 
-#include "CreateMultiplayerGameDialog.h"
-#include "CreateMultiplayerGameServerPage.h"
-#include "CreateMultiplayerGameGameplayPage.h"
-#include "CreateMultiplayerGameBotPage.h"
+#include "createmultiplayergamedialog.h"
+#include "createmultiplayergameserverpage.h"
+#include "createmultiplayergamegameplaypage.h"
+#include "createmultiplayergamebotpage.h"
 
-#include "EngineInterface.h"
-#include "ModInfo.h"
-#include "GameUI_Interface.h"
+#include "engineinterface.h"
+#include "modinfo.h"
+#include "gameui_interface.h"
 
 #include <stdio.h>
 
@@ -20,7 +20,7 @@ using namespace vgui;
 
 #include <vgui/ILocalize.h>
 
-#include "FileSystem.h"
+#include "filesystem.h"
 #include <KeyValues.h>
 
 // memdbgon must be the last include file in a .cpp file!!!

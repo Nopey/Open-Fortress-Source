@@ -5,11 +5,11 @@
 // $NoKeywords: $
 //
 //=============================================================================//
-#include "OptionsSubPortal.h"
-#include "CvarToggleCheckButton.h"
+#include "optionssubportal.h"
+#include "cvartogglecheckbutton.h"
 #include "vgui_controls/ComboBox.h"
 
-#include "EngineInterface.h"
+#include "engineinterface.h"
 
 #include <KeyValues.h>
 #include <vgui/IScheme.h>

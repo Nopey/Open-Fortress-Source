@@ -2,7 +2,7 @@
 #include "vmyugc.h"
 #include "vgui/ISurface.h"
 #include "filesystem.h"
-#include "VFooterPanel.h"
+#include "vfooterpanel.h"
 #include "vhybridbutton.h"
 #include "nb_header_footer.h"
 #include "nb_button.h"
