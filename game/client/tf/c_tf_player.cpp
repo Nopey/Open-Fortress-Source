@@ -83,7 +83,9 @@ ConVar tf_playergib_maxspeed( "tf_playergib_maxspeed", "400", FCVAR_CHEAT, "Max 
 
 ConVar cl_autorezoom( "cl_autorezoom", "1", FCVAR_USERINFO | FCVAR_ARCHIVE, "When set to 1, sniper rifle will re-zoom after firing a zoomed shot." );
 
-ConVar of_muzzlelight("of_muzzlelight", "1", FCVAR_ARCHIVE, "Enable dynamic lights for muzzleflashes, projectiles and the flamethrower");
+ConVar of_muzzlelight("of_muzzlelight", "1", FCVAR_ARCHIVE, "Enable dynamic lights for muzzleflashes, projectiles and the flamethrower.");
+ConVar of_beta_muzzleflash("of_beta_muzzleflash", "0", FCVAR_ARCHIVE, "Enable the TF2 beta muzzleflash model when firing.");
+
 ConVar of_idleview("of_idleview", "0", FCVAR_ARCHIVE, "Enables/Disables idle shake.");
 
 ConVar ofd_color_r( "ofd_color_r", "128", FCVAR_ARCHIVE | FCVAR_USERINFO, "Sets merc color's red channel value", true, -1, true, 255 );
@@ -94,6 +96,8 @@ ConVar ofd_use_quake_rl("ofd_use_quake_rl", "0", FCVAR_ARCHIVE | FCVAR_USERINFO,
 ConVar ofd_tennisball("ofd_tennisball", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "Big Tiddie Tennis GF\n");
 ConVar of_mercenary_hat("of_mercenary_hat", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "Because you can't have TF2 without hats\n");
 ConVar of_disable_cosmetics("of_disable_cosmetics", "0", FCVAR_ARCHIVE | FCVAR_USERINFO, "Because you CAN have TF2 without hats\n");
+
+ConVar tf_hud_no_crosshair_on_scope_zoom("tf_hud_no_crosshair_on_scope_zoom", "1", FCVAR_ARCHIVE | FCVAR_USERINFO, "Disable the crosshair when scoped in with a Sniper Rifle or Railgun.");
 
 static ConVar cl_fp_ragdoll("cl_fp_ragdoll", "0", FCVAR_ARCHIVE, "Enable first person ragdolls.");
 
@@ -1360,6 +1364,7 @@ BEGIN_RECV_TABLE_NOBASE( C_TFPlayer, DT_TFLocalPlayerExclusive )
 		0, 
 		"player_object_array"	),
 
+	RecvPropEHandle( RECVINFO( m_hLadder ) ),
 	RecvPropFloat( RECVINFO( m_angEyeAngles[0] ) ),
 //	RecvPropFloat( RECVINFO( m_angEyeAngles[1] ) ),
 
@@ -4428,4 +4433,18 @@ void C_TFPlayer::CalcViewIdle(QAngle& eyeAngles)
 int C_TFPlayer::GetAccount() const
 {
 	return m_iAccount;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Helper to remove from ladder
+//-----------------------------------------------------------------------------
+void C_TFPlayer::ExitLadder()
+{
+	if ( MOVETYPE_LADDER != GetMoveType() )
+		return;
+	
+	SetMoveType( MOVETYPE_WALK );
+	SetMoveCollide( MOVECOLLIDE_DEFAULT );
+	// Remove from ladder
+	/*m_HL2Local.*/m_hLadder = NULL;
 }

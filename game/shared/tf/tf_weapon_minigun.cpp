@@ -72,7 +72,11 @@ END_PREDICTION_DATA()
 LINK_ENTITY_TO_CLASS( tfc_weapon_assaultcannon, CTFCAssaultCannon );
 PRECACHE_WEAPON_REGISTER( tfc_weapon_assaultcannon );
 
+#ifdef CLIENT_DLL
 
+extern ConVar of_beta_muzzleflash;
+
+#endif
 
 // Server specific.
 #ifndef CLIENT_DLL
@@ -597,7 +601,11 @@ void CTFMinigun::UpdateBarrelMovement()
 void CTFMinigun::OnDataChanged( DataUpdateType_t updateType )
 {
 	// Brass ejection and muzzle flash.
-	HandleMuzzleEffect();
+	// Don't do this if using beta muzzleflashes as they handle it by themselves
+	if ( !of_beta_muzzleflash.GetBool() )
+	{
+		HandleMuzzleEffect();
+	}
 
 	BaseClass::OnDataChanged( updateType );
 
@@ -664,6 +672,8 @@ void CTFMinigun::ItemPreFrame( void )
 //-----------------------------------------------------------------------------
 void CTFMinigun::StartMuzzleEffect()
 {
+	StopMuzzleEffect();
+
 	C_BaseEntity *pEffectOwner = GetWeaponForEffect();
 	if ( !pEffectOwner )
 		return;

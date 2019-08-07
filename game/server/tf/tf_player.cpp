@@ -300,6 +300,7 @@ BEGIN_SEND_TABLE_NOBASE( CTFPlayer, DT_TFLocalPlayerExclusive )
 		"player_object_array"
 		),
 
+	SendPropEHandle( SENDINFO( m_hLadder ) ),
 	SendPropFloat( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 8, SPROP_CHANGES_OFTEN, -90.0f, 90.0f ),
 //	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 1), 10, SPROP_CHANGES_OFTEN ),
 
@@ -739,7 +740,10 @@ void CTFPlayer::Precache()
 
 	PrecacheScriptSound( TFGameRules()->GetMusicName( false ) );
 	PrecacheScriptSound( TFGameRules()->GetMusicName( true ) );
-	
+
+	// needed to suppress console spam about weapon spawners
+	PrecacheMaterial( "VGUI/flagtime_full" );
+	PrecacheMaterial( "VGUI/flagtime_empty" );
 
 	BaseClass::Precache();
 }
@@ -1307,12 +1311,8 @@ void CTFPlayer::GiveDefaultItems()
 	else
 		ManageRegularWeapons( pData );
 
-	// only manage builder weapons for engi and spy
-	if ( GetPlayerClass()->IsClass( TF_CLASS_ENGINEER ) || ( GetPlayerClass()->IsClass( TF_CLASS_SPY ) ) )
-	{
-		// Give a builder weapon for each object the player class is allowed to build
-		ManageBuilderWeapons( pData );
-	}
+	// Give a builder weapon for each object the player class is allowed to build
+	ManageBuilderWeapons( pData );
 }
 
 void CTFPlayer::StripWeapons( void )
@@ -1439,64 +1439,67 @@ int CTFPlayer::RestockCloak( float PowerupSize )
 //-----------------------------------------------------------------------------
 void CTFPlayer::ManageBuilderWeapons( TFPlayerClassData_t *pData )
 {
-	int active = m_hActiveWeapon.Get()->GetSlot();
-	int last = m_hActiveWeapon.Get()->GetSlot();
-	if (GetLastWeapon())
-		last = GetLastWeapon()->GetSlot();
-	if ( pData->m_aBuildable[0] != OBJ_LAST )
+	if ( m_hActiveWeapon )
 	{
-		CTFWeaponBase *pBuilder = Weapon_OwnsThisID( TF_WEAPON_BUILDER );
-
-		// Give the player a new builder weapon when they switch between engy and spy
-		if ( pBuilder && !GetPlayerClass()->CanBuildObject( pBuilder->GetSubType() ) )
-		{
-			Weapon_Detach( pBuilder );
-			UTIL_Remove( pBuilder );
-
-			pBuilder = NULL;
-		}
-		
-		if ( pBuilder )
-		{
-			pBuilder->GiveDefaultAmmo();
-			pBuilder->ChangeTeam( GetTeamNumber() );
-
-			if ( m_bRegenerating == false )
-			{
-				pBuilder->WeaponReset();
-			}
-		}
-		else
-		{
-			pBuilder = (CTFWeaponBase *)GiveNamedItem( "tf_weapon_builder" );
-
-			if ( pBuilder )
-			{
-				pBuilder->SetSubType( pData->m_aBuildable[0] );
-				pBuilder->DefaultTouch( this );
-				if ( pData->m_aBuildable[0] == OBJ_ATTACHMENT_SAPPER)
-					last = 1;
-			}
-		}
-
-		if ( pBuilder )
-		{
-			pBuilder->m_nSkin = GetTeamNumber() - 2;	// color the w_model to the team
-		}
+	    int active = m_hActiveWeapon.Get()->GetSlot();
+	    int last = m_hActiveWeapon.Get()->GetSlot();
+	    if (GetLastWeapon())
+	    	last = GetLastWeapon()->GetSlot();
+	    if ( pData->m_aBuildable[0] != OBJ_LAST )
+	    {
+	    	CTFWeaponBase *pBuilder = Weapon_OwnsThisID( TF_WEAPON_BUILDER );
+        
+	    	// Give the player a new builder weapon when they switch between engy and spy
+	    	if ( pBuilder && !GetPlayerClass()->CanBuildObject( pBuilder->GetSubType() ) )
+	    	{
+	    		Weapon_Detach( pBuilder );
+	    		UTIL_Remove( pBuilder );
+        
+	    		pBuilder = NULL;
+	    	}
+	    	
+	    	if ( pBuilder )
+	    	{
+	    		pBuilder->GiveDefaultAmmo();
+	    		pBuilder->ChangeTeam( GetTeamNumber() );
+        
+	    		if ( m_bRegenerating == false )
+	    		{
+	    			pBuilder->WeaponReset();
+	    		}
+	    	}
+	    	else
+	    	{
+	    		pBuilder = (CTFWeaponBase *)GiveNamedItem( "tf_weapon_builder" );
+        
+	    		if ( pBuilder )
+	    		{
+	    			pBuilder->SetSubType( pData->m_aBuildable[0] );
+	    			pBuilder->DefaultTouch( this );
+	    			if ( pData->m_aBuildable[0] == OBJ_ATTACHMENT_SAPPER)
+	    				last = 1;
+	    		}
+	    	}
+        
+	    	if ( pBuilder )
+	    	{
+	    		pBuilder->m_nSkin = GetTeamNumber() - 2;	// color the w_model to the team
+	    	}
+	    }
+	    else
+	    {
+	    	//Not supposed to be holding a builder, nuke it from orbit
+	    	CTFWeaponBase *pWpn = Weapon_OwnsThisID( TF_WEAPON_BUILDER );
+        
+	    	if ( pWpn == NULL )
+	    		return;
+        
+	    	Weapon_Detach( pWpn );
+	    	UTIL_Remove( pWpn );
+	    }
+	    Weapon_Switch( Weapon_GetSlot( active ) );
+	    Weapon_SetLast( Weapon_GetSlot( last ) );
 	}
-	else
-	{
-		//Not supposed to be holding a builder, nuke it from orbit
-		CTFWeaponBase *pWpn = Weapon_OwnsThisID( TF_WEAPON_BUILDER );
-
-		if ( pWpn == NULL )
-			return;
-
-		Weapon_Detach( pWpn );
-		UTIL_Remove( pWpn );
-	}
-	Weapon_Switch( Weapon_GetSlot( active ) );
-	Weapon_SetLast( Weapon_GetSlot( last ) );
 }
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -1943,17 +1946,28 @@ CBaseEntity* CTFPlayer::EntSelectSpawnPoint()
 				{
 					Warning( "Player Spawn: no valid info_player_deathmatch found, fallbacking to info_player_start\n" );
 
-					pSpawnPointName = "info_player_start";
-
-					// this is likely to be a singleplayer HL2 map and it may have randomized info_player_starts, therefore we use dm spawn logic again
-					bFind = SelectDMSpawnSpots( pSpawnPointName, pSpot );
-
-					if ( bFind )
+					if ( !Q_strncmp(STRING(gpGlobals->mapname), "d1_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d2_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d3_", 3) )
 					{
-						g_pLastSpawnPoints[ GetTeamNumber() ] = pSpot;
-					}
+						pSpot = FindPlayerStart( "info_player_start" );
+						if ( pSpot )
+							return pSpot;
 
-					m_pSpawnPoint = dynamic_cast<CTFTeamSpawn*>( pSpot );
+						return CBaseEntity::Instance( INDEXENT(0) );
+					}
+					else
+					{
+						pSpawnPointName = "info_player_start";
+
+						// this is likely to be a singleplayer HL2 map and it may have randomized info_player_starts, therefore we use dm spawn logic again
+						bFind = SelectDMSpawnSpots( pSpawnPointName, pSpot );
+
+						if ( bFind )
+						{
+							g_pLastSpawnPoints[ GetTeamNumber() ] = pSpot;
+						}
+
+						m_pSpawnPoint = dynamic_cast<CTFTeamSpawn*>( pSpot );
+					}
 				}
 			}
 
@@ -1968,6 +1982,7 @@ CBaseEntity* CTFPlayer::EntSelectSpawnPoint()
 		}
 	}
 
+	//
 	if ( !pSpot )
 	{
 		Warning( "Player Spawn: no valid spawn point was found!\n" );
@@ -2904,8 +2919,8 @@ bool CTFPlayer::ClientCommand( const CCommand &args )
 				// exclude some undesirable classes
 				do
 				{
-					nClass = random->RandomInt( TF_FIRST_NORMAL_CLASS, TF_LAST_NORMAL_CLASS );
-				} while( nClass == TF_CLASS_SCOUT || nClass == TF_CLASS_SPY );
+					nClass = random->RandomInt( TF_FIRST_NORMAL_CLASS, TF_CLASS_MERCENARY );
+				} while( nClass == TF_CLASS_SCOUT || nClass == TF_CLASS_MERCENARY );
 			}
 
 			m_Shared.Disguise( ( GetTeamNumber() == TF_TEAM_BLUE ) ? TF_TEAM_RED : TF_TEAM_BLUE, nClass );
@@ -3972,6 +3987,12 @@ bool CTFPlayer::ShouldCollide( int collisionGroup, int contentsMask ) const
 	if ( ( ( collisionGroup == COLLISION_GROUP_PLAYER_MOVEMENT ) && tf_avoidteammates.GetBool() ) ||
 		collisionGroup == TFCOLLISION_GROUP_ROCKETS )
 	{
+		// hl2 maps need to return false
+		if ( !Q_strncmp(STRING(gpGlobals->mapname), "d1_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d2_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d3_", 3) )
+		{
+			return false;
+		}
+
 		if (TFGameRules() && TFGameRules()->IsDMGamemode() && !ofd_allowteams.GetBool() && !TFGameRules()->IsTeamplay())
 		{
 			return BaseClass::ShouldCollide(collisionGroup, contentsMask);
@@ -8425,3 +8446,33 @@ void CTFPlayer::StopLoopingSounds( void )
 }
 
 ConVar	sk_battery("sk_battery", "0");
+
+//-----------------------------------------------------------------------------
+// Purpose: Helper to remove from ladder
+//-----------------------------------------------------------------------------
+void CTFPlayer::ExitLadder()
+{
+	if ( MOVETYPE_LADDER != GetMoveType() )
+		return;
+
+	SetMoveType( MOVETYPE_WALK );
+	SetMoveCollide( MOVECOLLIDE_DEFAULT );
+	// Remove from ladder
+	/*m_HL2Local.*/m_hLadder.Set( NULL );
+}
+
+
+surfacedata_t *CTFPlayer::GetLadderSurface( const Vector &origin )
+{
+	extern const char *FuncLadder_GetSurfaceprops(CBaseEntity *pLadderEntity);
+
+	CBaseEntity *pLadder = /*m_HL2Local.*/m_hLadder.Get();
+	if ( pLadder )
+	{
+		const char *pSurfaceprops = FuncLadder_GetSurfaceprops(pLadder);
+		// get ladder material from func_ladder
+		return physprops->GetSurfaceData( physprops->GetSurfaceIndex( pSurfaceprops ) );
+
+	}
+	return BaseClass::GetLadderSurface(origin);
+}

@@ -520,8 +520,7 @@ void CBaseCombatWeapon::FallInit( void )
 #endif //CLIENT_DLL
 	}	
 
-	// stop a crash
-	//SetPickupTouch();
+	SetPickupTouch();
 	
 	SetThink( &CBaseCombatWeapon::FallThink );
 
@@ -594,8 +593,7 @@ void CBaseCombatWeapon::Materialize( void )
 	AddSolidFlags( FSOLID_TRIGGER );
 #endif
 
-	// stop a crash
-	//SetPickupTouch();
+	SetPickupTouch();
 
 	SetThink (NULL);
 }
@@ -730,7 +728,7 @@ void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		//
 
 		// hl2 weapons cause crashing when pickuped - DISABLED
-		/*
+		
 		if ( pPlayer->BumpWeapon( this ) )
 		{
 			OnPickedUp( pPlayer );
@@ -739,7 +737,7 @@ void CBaseCombatWeapon::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_
 		{
 			pPlayer->PickupObject( this );
 		}
-		*/
+		
 
 	}
 }

@@ -434,7 +434,7 @@ void FileWeaponInfo_t::Parse( KeyValues *pKeyValuesData, const char *szWeaponNam
 	if ( iSlotDM >= MAX_WEAPON_SLOTS ||
 		iPosition >= MAX_WEAPON_POSITIONS )
 	{
-		Warning( "Invalid weapon slot or position [slot %d/%d max], pos[%d/%d max]\n",
+		DevMsg( "Invalid weapon slot or position [slot %d/%d max], pos[%d/%d max]\n",
 			iSlotDM, MAX_WEAPON_SLOTS - 1, iPosition, MAX_WEAPON_POSITIONS - 1 );
 	}
 	else

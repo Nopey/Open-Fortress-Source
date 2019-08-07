@@ -26,6 +26,16 @@ $Group "game"
 	"gameui"
 }
 
+$Group "game_no_gameui"
+{
+	"client"
+	"mathlib"
+	"raytrace"
+	"server"
+	"tier1"
+	"vgui_controls"
+}
+
 $Group "shaders"
 {
 	"game_shader_dx9"

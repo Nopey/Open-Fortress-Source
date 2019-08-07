@@ -22,6 +22,8 @@
 #include "c_playerattachedmodel.h"
 #include "iinput.h"
 
+#include "hl_movedata.h"
+
 class C_MuzzleFlashModel;
 class C_BaseObject;
 
@@ -177,6 +179,11 @@ public:
 	CUtlVector<EHANDLE>		*GetSpawnedGibs( void ) { return &m_hSpawnedGibs; }
 
 	Vector 	GetClassEyeHeight( void );
+
+	// HL2 ladder related methods
+	LadderMove_t		*GetLadderMove() { return &/*m_HL2Local.*/m_LadderMove; }
+	virtual void		ExitLadder();
+	//virtual surfacedata_t *GetLadderSurface(const Vector &origin);
 
 	void			ForceUpdateObjectHudState( void );
 
@@ -392,6 +399,10 @@ public:
 	double BobTime;
 	float BobLastTime;
 	float IdleScale;
+
+	// Ladder related data
+	EHANDLE			m_hLadder;
+	LadderMove_t	m_LadderMove;
 	
 	Color TennisBall;
 private:

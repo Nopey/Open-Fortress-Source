@@ -146,10 +146,13 @@ void FX_FireBullets( int iPlayer, const Vector &vecOrigin, const QAngle &vecAngl
 // Client specific.
 #ifdef CLIENT_DLL
 	bDoEffects = true;
+
 	if( iWeapon == TF_WEAPON_LIGHTNING_GUN )
 		bDoEffects = false;
+
 	// The minigun has custom sound & animation code to deal with its windup/down.
-	if ( iWeapon != TF_WEAPON_MINIGUN && iWeapon != TF_WEAPON_GATLINGGUN )
+	if ( pPlayer->ShouldDrawThisPlayer() 
+		&& ( iWeapon != TF_WEAPON_MINIGUN && iWeapon != TF_WEAPON_GATLINGGUN ) )
 	{
 		// Fire the animation event.
 		if ( !pPlayer->IsDormant() )

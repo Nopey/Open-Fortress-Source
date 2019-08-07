@@ -107,13 +107,18 @@ void CDisguiseStatus::Paint()
 	wchar_t *pszClassName = g_pVGuiLocalize->Find( GetPlayerClassData( nDisguiseClass )->m_szLocalizableName );
 
 	wchar_t *pszTeamName = NULL;
-	if ( nDisguiseTeam == TF_TEAM_RED )
+
+	switch ( nDisguiseTeam )
 	{
-		pszTeamName = g_pVGuiLocalize->Find("#TF_Spy_Disguise_Team_Red");
-	}
-	else
-	{
-		pszTeamName = g_pVGuiLocalize->Find("#TF_Spy_Disguise_Team_Blue");
+		case TF_TEAM_RED:
+			pszTeamName = g_pVGuiLocalize->Find("#TF_Spy_Disguise_Team_Red");
+			break;
+		case TF_TEAM_BLUE:
+			pszTeamName = g_pVGuiLocalize->Find("#TF_Spy_Disguise_Team_Blue");
+			break;
+		//case TF_TEAM_MERCENARY:
+		//	pszTeamName = g_pVGuiLocalize->Find("#TF_Spy_Disguise_Team_Merenary");
+		//	break;
 	}
 
 	if ( pszTemplate && pszClassName && pszTeamName )

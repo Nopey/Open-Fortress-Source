@@ -992,12 +992,15 @@ void CNPC_Combine::StartTask( const Task_t *pTask )
 		break;
 	case TASK_RANGE_ATTACK1:
 		{
-			m_nShots = GetActiveWeapon()->GetRandomBurst();
-			m_flShotDelay = GetActiveWeapon()->GetFireRate();
+			if ( GetActiveWeapon() )
+			{
+				m_nShots = GetActiveWeapon()->GetRandomBurst();
+				m_flShotDelay = GetActiveWeapon()->GetFireRate();
 
-			m_flNextAttack = gpGlobals->curtime + m_flShotDelay - 0.1;
-			ResetIdealActivity( ACT_RANGE_ATTACK1 );
-			m_flLastAttackTime = gpGlobals->curtime;
+				m_flNextAttack = gpGlobals->curtime + m_flShotDelay - 0.1;
+				ResetIdealActivity( ACT_RANGE_ATTACK1 );	
+				m_flLastAttackTime = gpGlobals->curtime;
+			}
 		}
 		break;
 

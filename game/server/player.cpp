@@ -78,6 +78,8 @@
 #include "econ_wearable.h"
 #endif
 
+#include "tf_weaponbase.h"
+
 // NVNT haptic utils
 #include "haptics/haptic_utils.h"
 
@@ -5131,11 +5133,9 @@ void CBasePlayer::Precache( void )
 	enginesound->PrecacheSentenceGroup( "HEV" );
 
 	// These are always needed
-#if !defined ( TF_DLL ) && !defined ( TF_MOD )
 	PrecacheParticleSystem( "slime_splash_01" );
 	PrecacheParticleSystem( "slime_splash_02" );
 	PrecacheParticleSystem( "slime_splash_03" );
-#endif
 
 	// in the event that the player JUST spawned, and the level node graph
 	// was loaded, fix all of the node graph pointers before the game starts.
@@ -6628,6 +6628,11 @@ extern bool UTIL_ItemCanBeTouchedByPlayer( CBaseEntity *pItem, CBasePlayer *pPla
 bool CBasePlayer::BumpWeapon( CBaseCombatWeapon *pWeapon )
 {
 	CBaseCombatCharacter *pOwner = pWeapon->GetOwner();
+
+	CTFWeaponBase* pTFWeapon = dynamic_cast< CTFWeaponBase *>( pWeapon );
+
+	if ( !pTFWeapon )
+		return false;
 
 	// Can I have this weapon type?
 	if ( !IsAllowedToPickupWeapons() )

@@ -856,6 +856,7 @@ void CBaseCombatWeapon::DefaultTouch( CBaseEntity *pOther )
 	if ( IsDissolving() )
 		return;
 
+
 	// if it's not a player, ignore
 	CBasePlayer *pPlayer = ToBasePlayer(pOther);
 	if ( !pPlayer )

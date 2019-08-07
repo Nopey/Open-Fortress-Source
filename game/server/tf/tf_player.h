@@ -15,6 +15,8 @@
 #include "hl2_playerlocaldata.h"
 #include "hl2_player.h"
 
+#include "hl_movedata.h"
+
 class CTFPlayer;
 class CTFTeam;
 class CTFGoal;
@@ -349,6 +351,11 @@ public:
 
 	Vector 	GetClassEyeHeight( void );
 
+	// HL2 ladder related methods
+	LadderMove_t		*GetLadderMove() { return &/*m_HL2Local.*/m_LadderMove; }
+	virtual void		ExitLadder();
+	virtual surfacedata_t *GetLadderSurface( const Vector &origin );
+
 	void	UpdateExpression( void );
 	void	ClearExpression( void );
 
@@ -620,6 +627,11 @@ public:
 	CNetworkVar(bool, m_bChatting);
 
 	///==HL2 PORT START==///
+
+	// HL2 Ladder related data
+	CNetworkVar( EHANDLE, m_hLadder );
+	LadderMove_t				m_LadderMove;
+
 	bool				IsSprinting( void ) { return false; }
 	bool				IsWeaponLowered( void ) { return false; }
 	void				StartWaterDeathSounds(void);
@@ -632,7 +644,7 @@ public:
 	void				MissedAR2AltFire() {;}
 	void				CombineBallSocketed( CPropCombineBall *pCombineBall );
 	virtual void		StopLoopingSounds(void);
-	
+
 	bool	m_bTransition;
 
 	// Commander Mode for controller NPCs

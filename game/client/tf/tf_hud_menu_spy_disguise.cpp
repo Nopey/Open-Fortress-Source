@@ -37,7 +37,7 @@ CHudMenuSpyDisguise::CHudMenuSpyDisguise( const char *pElementName ) : CHudEleme
 
 	SetHiddenBits( HIDEHUD_MISCSTATUS );
 
-	for ( int i=0; i<9; i++ )
+	for ( int i=0; i<10; i++ )
 	{
 		char buf[32];
 		Q_snprintf( buf, sizeof(buf), "class_item_red_%d", i+1 );
@@ -45,9 +45,6 @@ CHudMenuSpyDisguise::CHudMenuSpyDisguise( const char *pElementName ) : CHudEleme
 
 		Q_snprintf( buf, sizeof(buf), "class_item_blue_%d", i+1 );
 		m_pClassItems_Blue[i] = new EditablePanel( this, buf );
-
-		Q_snprintf(buf, sizeof(buf), "class_item_mercenary_%d", i + 1);
-		m_pClassItems_Mercenary[i] = new EditablePanel(this, buf);
 	}
 
 	m_iShowingTeam = TF_TEAM_RED;
@@ -72,8 +69,10 @@ ConVar tf_disguise_menu_controller_mode( "tf_disguise_menu_controller_mode", "0"
 //-----------------------------------------------------------------------------
 void CHudMenuSpyDisguise::ApplySchemeSettings( IScheme *pScheme )
 {
+	/*
 	bool b360Style = ( IsConsole() || tf_disguise_menu_controller_mode.GetBool() );
 
+	// disabled as this is completely broken
 	if ( b360Style )
 	{
 		// load control settings...
@@ -115,8 +114,9 @@ void CHudMenuSpyDisguise::ApplySchemeSettings( IScheme *pScheme )
 		m_iSelectedItem = -1;	// force reposition
 		SetSelectedItem( 5 );
 	}
+	
 	else
-	{
+	{*/
 		// load control settings...
 		LoadControlSettings( "resource/UI/disguise_menu/HudMenuSpyDisguise.res" );
 
@@ -129,6 +129,7 @@ void CHudMenuSpyDisguise::ApplySchemeSettings( IScheme *pScheme )
 		m_pClassItems_Red[6]->LoadControlSettings( "resource/UI/disguise_menu/medic_red.res" );
 		m_pClassItems_Red[7]->LoadControlSettings( "resource/UI/disguise_menu/sniper_red.res" );
 		m_pClassItems_Red[8]->LoadControlSettings( "resource/UI/disguise_menu/spy_red.res" );
+		m_pClassItems_Red[9]->LoadControlSettings( "resource/UI/disguise_menu/mercenary_red.res" );
 
 		m_pClassItems_Blue[0]->LoadControlSettings( "resource/UI/disguise_menu/scout_blue.res" );
 		m_pClassItems_Blue[1]->LoadControlSettings( "resource/UI/disguise_menu/soldier_blue.res" );
@@ -139,7 +140,9 @@ void CHudMenuSpyDisguise::ApplySchemeSettings( IScheme *pScheme )
 		m_pClassItems_Blue[6]->LoadControlSettings( "resource/UI/disguise_menu/medic_blue.res" );
 		m_pClassItems_Blue[7]->LoadControlSettings( "resource/UI/disguise_menu/sniper_blue.res" );
 		m_pClassItems_Blue[8]->LoadControlSettings( "resource/UI/disguise_menu/spy_blue.res" );
+		m_pClassItems_Blue[9]->LoadControlSettings( "resource/UI/disguise_menu/mercenary_blue.res" );
 
+		/*
 		m_pClassItems_Mercenary[0]->LoadControlSettings("resource/UI/disguise_menu/scout_mercenary.res");
 		m_pClassItems_Mercenary[1]->LoadControlSettings("resource/UI/disguise_menu/soldier_mercenary.res");
 		m_pClassItems_Mercenary[2]->LoadControlSettings("resource/UI/disguise_menu/pyro_mercenary.res");
@@ -149,9 +152,11 @@ void CHudMenuSpyDisguise::ApplySchemeSettings( IScheme *pScheme )
 		m_pClassItems_Mercenary[6]->LoadControlSettings("resource/UI/disguise_menu/medic_mercenary.res");
 		m_pClassItems_Mercenary[7]->LoadControlSettings("resource/UI/disguise_menu/sniper_mercenary.res");
 		m_pClassItems_Mercenary[8]->LoadControlSettings("resource/UI/disguise_menu/spy_mercenary.res");
+		m_pClassItems_Mercenary[9]->LoadControlSettings("resource/UI/disguise_menu/mercenary_mercenary.res");
+		*/
 
 		m_pActiveSelection = NULL;
-	}
+	//}
 
 
 	BaseClass::ApplySchemeSettings( pScheme );
@@ -197,7 +202,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 	}
 
 	// menu classes are not in the same order as the defines
-	static int iRemapKeyToClass[11] = 
+	static int iRemapKeyToClass[10] = 
 	{
 		TF_CLASS_SCOUT,
 		TF_CLASS_SOLDIER,
@@ -208,8 +213,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 		TF_CLASS_MEDIC,
 		TF_CLASS_SNIPER,
 		TF_CLASS_SPY,
-		TF_CLASS_MERCENARY,
-		TF_CLASS_CIVILIAN
+		TF_CLASS_MERCENARY
 	};
 
 	bool bController = ( IsConsole() || ( keynum >= JOYSTICK_FIRST ) );
@@ -222,7 +226,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 		{
 		case KEY_XBUTTON_UP:
 			// jump to last
-			iNewSelection = 9;
+			iNewSelection = 10;
 			break;
 
 		case KEY_XBUTTON_DOWN:
@@ -233,7 +237,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 		case KEY_XBUTTON_RIGHT:
 			// move selection to the right
 			iNewSelection++;
-			if ( iNewSelection > 9 )
+			if ( iNewSelection > 10 )
 				iNewSelection = 1;
 			break;
 
@@ -241,7 +245,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 			// move selection to the right
 			iNewSelection--;
 			if ( iNewSelection < 1 )
-				iNewSelection = 9;
+				iNewSelection = 10;
 			break;
 
 		case KEY_XBUTTON_RTRIGGER:
@@ -285,6 +289,7 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 		case KEY_7:
 		case KEY_8:
 		case KEY_9:
+		case KEY_0:
 			{
 				int iClass = iRemapKeyToClass[ keynum - KEY_1 ];
 				int iTeam = ( m_iShowingTeam == TF_TEAM_BLUE ) ? 1 : 0;
@@ -295,11 +300,6 @@ int	CHudMenuSpyDisguise::HudElementKeyInput( int down, ButtonCode_t keynum, cons
 
 		case KEY_MINUS:
 			ToggleDisguiseTeam();
-			return 0;
-
-		case KEY_0:
-			// cancel, close the menu
-			engine->ExecuteClientCmd( "lastinv" );
 			return 0;
 
 		default:
@@ -331,35 +331,15 @@ void CHudMenuSpyDisguise::SelectDisguise( int iClass, int iTeam )
 void CHudMenuSpyDisguise::ToggleDisguiseTeam( void )
 {
 	// flip the teams
-	
-	if ( m_iShowingTeam == TF_TEAM_RED )
-	{
-		m_iShowingTeam = TF_TEAM_BLUE;
-	}
-	else if ( m_iShowingTeam == TF_TEAM_BLUE )
-	{
-		//if ( isdeatmatch== 1)
-		m_iShowingTeam = TF_TEAM_MERCENARY;
-		//else m_iShowingTeam = TF_TEAM_RED;
-	}
-	else if ( m_iShowingTeam == TF_TEAM_MERCENARY )
-	{
-		m_iShowingTeam = TF_TEAM_RED;
-	}
-	
+	m_iShowingTeam = ( m_iShowingTeam == TF_TEAM_BLUE ) ? TF_TEAM_RED : TF_TEAM_BLUE;
+
 	// show / hide the class items
 	bool bShowBlue = ( m_iShowingTeam == TF_TEAM_BLUE );
-	
-	bool bShowMercenary = ( m_iShowingTeam == TF_TEAM_MERCENARY );
-	
+
 	for ( int i=0; i<9; i++ )
 	{
 		m_pClassItems_Red[i]->SetVisible( !bShowBlue );
-		m_pClassItems_Red[i]->SetVisible( !bShowMercenary );
 		m_pClassItems_Blue[i]->SetVisible( bShowBlue );
-		m_pClassItems_Blue[i]->SetVisible( !bShowMercenary );
-		m_pClassItems_Mercenary[i]->SetVisible( !bShowBlue );
-		m_pClassItems_Mercenary[i]->SetVisible( bShowMercenary );
 	}
 }
 
@@ -396,20 +376,14 @@ void CHudMenuSpyDisguise::FireGameEvent( IGameEvent *event )
 		if ( pPlayer )
 		{
 			bool bShowBlue = ( pPlayer->GetTeamNumber() == TF_TEAM_RED );
-			
-			bool bShowMercenary = ( pPlayer->GetTeamNumber() != TF_TEAM_MERCENARY );
-			
+
 			for ( int i=0; i<9; i++ )
 			{
 				m_pClassItems_Red[i]->SetVisible( !bShowBlue );
-				m_pClassItems_Red[i]->SetVisible( !bShowMercenary );
 				m_pClassItems_Blue[i]->SetVisible( bShowBlue );
-				m_pClassItems_Blue[i]->SetVisible( !bShowMercenary );
-				m_pClassItems_Mercenary[i]->SetVisible( !bShowBlue );
-				m_pClassItems_Mercenary[i]->SetVisible( bShowMercenary );
 			}
 
-			m_iShowingTeam = ( bShowBlue ) ? TF_TEAM_BLUE : TF_TEAM_RED /* : TF_TEAM_MERCENARY */ ;
+			m_iShowingTeam = ( bShowBlue ) ? TF_TEAM_BLUE : TF_TEAM_RED;
 		}
 	}
 	else

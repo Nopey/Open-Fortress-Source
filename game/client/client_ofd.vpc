@@ -417,4 +417,8 @@ $Project "Client (OFD)"
 			
 		}
 	}
+	$Folder "Link Libraries"
+	{
+			$Lib    "$LIBPUBLIC\libdiscord-rpc" [$LINUX]
+	}
 }

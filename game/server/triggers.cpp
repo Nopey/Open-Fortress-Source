@@ -1597,8 +1597,6 @@ extern ConVar sv_transitions;
 
 void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 {
-
-
 	CBaseEntity	*pLandmark;
 	levellist_t	levels[16];	
 
@@ -1608,7 +1606,13 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 	if (!pPlayer)
 		return;
 	
-	pPlayer->m_bTransition = true;
+	// show a message if the player touches this trigger
+	if ( pPlayer->IsAlive() && !pPlayer->m_bTransition )
+	{
+		UTIL_ClientPrintAll( HUD_PRINTCENTER, "A player touched changelevel trigger. More players required to change level..." );
+
+		pPlayer->m_bTransition = true;
+	}
 
 	if (mp_transition_players_percent.GetInt() > 0)
 	{
@@ -1627,7 +1631,7 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 
 		if (((int)(transitionPlayers / totalPlayers * 100)) < mp_transition_players_percent.GetInt())
 		{
-			Msg("Transitions: Not enough players to trigger level change\n");
+			DevMsg("Transitions: Not enough players to trigger level change\n");
 			return;
 		}
 	}

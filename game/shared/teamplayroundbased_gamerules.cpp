@@ -653,6 +653,10 @@ void CTeamplayRoundBasedRules::CheckWaitingForPlayers( void )
 	// never waiting for players when loading a bug report
 	if ( IsLoadingBugBaitReport() || gpGlobals->eLoadType == MapLoad_Background )
 		return;
+
+	// no waiting for players in a hl2 map
+	if ( !Q_strncmp(STRING(gpGlobals->mapname), "d1_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d2_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d3_", 3) )
+		return;
 	
 	if( mp_waitingforplayers_restart.GetBool() )
 	{

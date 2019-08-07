@@ -114,11 +114,16 @@ extern ConVar mp_capstyle;
 extern ConVar sv_turbophysics;
 extern ConVar of_bunnyhop;
 extern ConVar of_crouchjump;
+extern ConVar ofd_forceclass;
 extern ConVar mp_disable_respawn_times;
 extern ConVar fraglimit;
 extern ConVar of_bunnyhop_max_speed_factor;
 extern ConVar tf_maxspeed;
 extern ConVar sv_airaccelerate;
+extern ConVar of_knockback_all;
+extern ConVar of_knockback_bullets;
+extern ConVar of_knockback_melee;
+extern ConVar of_knockback_explosives;
 
 ConVar tf_caplinear						( "tf_caplinear", "1", FCVAR_REPLICATED, "If set to 1, teams must capture control points linearly." );
 ConVar tf_stalematechangeclasstime		( "tf_stalematechangeclasstime", "20", FCVAR_REPLICATED, "Amount of time that players are allowed to change class in stalemates." );
@@ -129,6 +134,7 @@ ConVar of_gamemode_dm		( "of_gamemode_dm", "0", FCVAR_NOTIFY | FCVAR_REPLICATED,
 ConVar mp_teamplay			( "mp_teamplay", "-1", FCVAR_NOTIFY | FCVAR_REPLICATED, "Toggles Team Deathmatch." );
 ConVar of_arena				( "of_arena", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "Toggles Arena mode." );
 ConVar ofd_threewave				( "ofd_threewave", "0", FCVAR_NOTIFY | FCVAR_REPLICATED, "Toggles Threewave." );
+ConVar ofd_allow_allclass_pickups ("ofd_allow_allclass_pickups", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Non Merc Classes can pickup weapons.");
 
 // Not implemented.
 // ConVar ofd_ggweaponlist		( "ofd_ggweaponlist", "cfg/gg_weaponlist_default.txt" );
@@ -1044,6 +1050,7 @@ void CTFGameRules::Activate()
 		of_bunnyhop.SetValue(1);
 		of_crouchjump.SetValue(1);
 		of_bunnyhop_max_speed_factor.SetValue(0);
+		ofd_allow_allclass_pickups.SetValue(1);
 		tf_maxspeed.SetValue(0);
 		sv_airaccelerate.SetValue(500);
 		if ( fraglimit.GetFloat() == 0 ) fraglimit.SetValue( 25 );
@@ -1081,6 +1088,22 @@ void CTFGameRules::Activate()
 		AddGametype(TF_GAMETYPE_ARENA);
 	}
 	
+	if ( !Q_strncmp(STRING(gpGlobals->mapname), "d1_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d2_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d3_", 3) )
+	{
+		AddGametype(TF_GAMETYPE_DM);
+
+		of_gamemode_dm.SetValue(1);
+		of_crouchjump.SetValue(1);
+		of_usehl2hull.SetValue(1);
+		of_knockback_all.SetValue(0.1f);
+		of_knockback_bullets.SetValue(0.1f);
+		of_knockback_explosives.SetValue(0.1f);
+		of_knockback_melee.SetValue(0.05f);
+
+		ofd_allow_allclass_pickups.SetValue(1);
+		ofd_forceclass.SetValue(0);
+		fraglimit.SetValue(999);
+	}
 }
 
 void CTFGameRules::FireGamemodeOutputs()
@@ -2305,8 +2328,12 @@ CBaseEntity *CTFGameRules::GetPlayerSpawnSpot( CBasePlayer *pPlayer )
 bool CTFGameRules::IsSpawnPointValid( CBaseEntity *pSpot, CBasePlayer *pPlayer, bool bIgnorePlayers )
 {
     // Check the team if not in deathmatch
-	if ( pSpot->GetTeamNumber() != pPlayer->GetTeamNumber() )
+	if ( !Q_strncmp(STRING(gpGlobals->mapname), "d1_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d2_", 3) || !Q_strncmp(STRING(gpGlobals->mapname), "d3_", 3) )
 	{
+	}
+	else if ( pSpot->GetTeamNumber() != pPlayer->GetTeamNumber() )
+	{
+		// wow...
 		if ( TFGameRules()->IsDMGamemode() && !TFGameRules()->IsTeamplay() )
 		{
 		}

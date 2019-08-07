@@ -18,6 +18,8 @@
 #include "client_virtualreality.h"
 #include "sourcevr/isourcevirtualreality.h"
 
+#include "c_tf_player.h"
+
 #ifdef SIXENSE
 #include "sixense/in_sixense.h"
 #endif
@@ -39,6 +41,8 @@ ConVar cl_crosshair_green( "cl_crosshair_green", "255", FCVAR_ARCHIVE );
 ConVar cl_crosshair_blue( "cl_crosshair_blue", "255", FCVAR_ARCHIVE );
 ConVar cl_crosshair_alpha( "cl_crosshair_alpha", "255", FCVAR_ARCHIVE );
 ConVar cl_crosshair_scale( "cl_crosshair_scale", "32", FCVAR_ARCHIVE );
+
+extern ConVar tf_hud_no_crosshair_on_scope_zoom;
 
 using namespace vgui;
 
@@ -88,13 +92,25 @@ void CHudCrosshair::ApplySchemeSettings( IScheme *scheme )
 //-----------------------------------------------------------------------------
 bool CHudCrosshair::ShouldDraw( void )
 {
+	C_TFPlayer *pPlayer = C_TFPlayer::GetLocalTFPlayer();
+
+	if ( !pPlayer )
+		return false;
+
+	// don't draw crosshair if scoped with a railgun or sniper rifle
+	if ( tf_hud_no_crosshair_on_scope_zoom.GetBool() )
+	{
+		if ( pPlayer->m_Shared.InCond( TF_COND_ZOOMED) )
+			return false;
+	}
+
+	// don't draw crosshair if taunting
+	if ( pPlayer->m_Shared.InCond( TF_COND_TAUNTING ) )
+		return false;
+
 	bool bNeedsDraw;
 
 	if ( m_bHideCrosshair )
-		return false;
-
-	C_BasePlayer* pPlayer = C_BasePlayer::GetLocalPlayer();
-	if ( !pPlayer )
 		return false;
 
 	C_BaseCombatWeapon *pWeapon = pPlayer->GetActiveWeapon();

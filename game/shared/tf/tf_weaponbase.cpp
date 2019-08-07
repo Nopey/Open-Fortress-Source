@@ -39,6 +39,7 @@ extern CTFWeaponInfo *GetTFWeaponInfo( int iWeapon );
 
 #ifdef CLIENT_DLL
 extern ConVar of_muzzlelight;
+extern ConVar of_beta_muzzleflash;
 #endif
 
 #if defined (CLIENT_DLL)
@@ -1626,7 +1627,7 @@ void CTFWeaponBase::CreateMuzzleFlashEffects(C_BaseEntity *pAttachEnt, int nInde
 			DispatchEffect( pszMuzzleFlashEffect, muzzleFlashData );
 		}
 
-		if ( pszMuzzleFlashModel )
+		if ( of_beta_muzzleflash.GetBool() && pszMuzzleFlashModel )
 		{
 			float flEffectLifetime = GetMuzzleFlashModelLifetime();
 
@@ -1866,7 +1867,9 @@ acttable_t CTFWeaponBase::m_acttablePrimary[] =
 	{ ACT_MP_JUMP_FLOAT,		ACT_MP_JUMP_FLOAT_PRIMARY,			false },
 	{ ACT_MP_JUMP_LAND,			ACT_MP_JUMP_LAND_PRIMARY,			false },
 	{ ACT_MP_SWIM,				ACT_MP_SWIM_PRIMARY,				false },
+	{ ACT_MP_DEPLOYED,			ACT_MP_DEPLOYED_PRIMARY,			false },
 	{ ACT_MP_SWIM_DEPLOYED,		ACT_MP_SWIM_DEPLOYED_PRIMARY,		false },
+	{ ACT_MP_CROUCHWALK_DEPLOYED,		ACT_MP_CROUCHWALK_DEPLOYED, false },
 
 	{ ACT_MP_ATTACK_STAND_PRIMARYFIRE,		ACT_MP_ATTACK_STAND_PRIMARY,	false },
 	{ ACT_MP_ATTACK_STAND_PRIMARYFIRE_DEPLOYED,		ACT_MP_ATTACK_STAND_PRIMARY_DEPLOYED, false },

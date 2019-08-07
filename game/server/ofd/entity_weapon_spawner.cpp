@@ -23,9 +23,9 @@
 extern ConVar ofd_mutators;
 extern ConVar ofd_multiweapons;
 extern ConVar ofd_weaponspawners;
+extern ConVar ofd_allow_allclass_pickups;
 
-ConVar mp_weaponstay( "mp_weaponstay", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Weapons dont dissapeer.");
-ConVar ofd_allow_allclass_pickups( "ofd_allow_allclass_pickups", "0", FCVAR_REPLICATED | FCVAR_NOTIFY, "Non Merc Classes can pickup weapons.");
+ConVar mp_weaponstay( "mp_weaponstay", "0", FCVAR_NOTIFY, "Weapons dont disappear.");
  
 //-----------------------------------------------------------------------------
 // Purpose: Spawn function for the Weapon Spawner

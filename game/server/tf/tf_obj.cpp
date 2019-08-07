@@ -1071,6 +1071,7 @@ const char *CBaseObject::GetResponseRulesModifier( void )
 //-----------------------------------------------------------------------------
 bool CBaseObject::StartBuilding( CBaseEntity *pBuilder )
 {
+
 	/*
 	// find any tf_ammo_boxes that we are colliding with and destroy them ?
 	// enable if we need to do this
@@ -1106,6 +1107,17 @@ bool CBaseObject::StartBuilding( CBaseEntity *pBuilder )
 			((CTFPlayer*)pBuilder)->HintMessage( HINT_ENGINEER_USE_WRENCH_ONOWN );
 		}
 		*/
+
+		// if the player has no build PDA, abort the building
+		CTFWeaponBase *pWeapon = ( (CTFPlayer*)pBuilder )->Weapon_OwnsThisID( TF_WEAPON_PDA_ENGINEER_BUILD );
+
+		if (pWeapon == NULL)
+		{
+			ClientPrint( (CBasePlayer*)pBuilder, HUD_PRINTCENTER, "Tried to build something without a Construction PDA.\n");
+			StopPlacement();
+			return false;
+		}
+
 		int iAmountPlayerPaidForMe = ((CTFPlayer*)pBuilder)->StartedBuildingObject( m_iObjectType );
 		if ( of_infiniteammo.GetBool() ) iAmountPlayerPaidForMe = 1;
 		if ( !iAmountPlayerPaidForMe )

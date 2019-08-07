@@ -54,8 +54,11 @@ BEGIN_DATADESC(CScriptIntro)
 	DEFINE_INPUTFUNC(FIELD_INTEGER, "SetFOV", InputSetFOV ),
 	DEFINE_INPUTFUNC(FIELD_INTEGER, "SetNextBlendMode", InputSetNextBlendMode ),
 	DEFINE_INPUTFUNC(FIELD_FLOAT, "SetNextBlendTime", InputSetNextBlendTime ),
-	DEFINE_INPUTFUNC(FIELD_VOID, "Activate", InputActivate ),
-	DEFINE_INPUTFUNC(FIELD_VOID, "Deactivate", InputDeactivate ),
+
+	// disabled the entity as the shaders for this entity do not exist in Source 2013 MP!
+	DEFINE_INPUTFUNC(FIELD_VOID, "Activate_disabled", InputActivate ),
+	DEFINE_INPUTFUNC(FIELD_VOID, "Deactivate_disabled", InputDeactivate ),
+
 	DEFINE_INPUTFUNC(FIELD_STRING, "FadeTo", InputFadeTo ),
 	DEFINE_INPUTFUNC(FIELD_STRING, "SetFadeColor", InputSetFadeColor ),
 

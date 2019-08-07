@@ -34,10 +34,10 @@ void RegisterUserMessages()
 	usermessages->Register( "RequestState", 0 );
 
 	// hl2
-	// usermessages->Register( "CreditsMsg", 1 );
-	// usermessages->Register( "SquadMemberDied", 0 );
-	// usermessages->Register( "UpdateJalopyRadar", -1 );
-	// usermessages->Register( "LogoTimeMsg", 4 );
+	usermessages->Register( "CreditsMsg", 1 );
+	usermessages->Register( "SquadMemberDied", 0 );
+	usermessages->Register( "UpdateJalopyRadar", -1 );
+	usermessages->Register( "LogoTimeMsg", 4 );
 
 	usermessages->Register( "Damage", -1 );		// for HUD damage indicators
 	usermessages->Register( "HintText", -1 );	// Displays hint text display

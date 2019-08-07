@@ -65,7 +65,7 @@ $Configuration
 	{
 		$SystemLibraries				"iconv" [$OSXALL]
 		$SystemFrameworks				"Carbon" [$OSXALL]
-		$SystemLibraries				"discord-rpc;rt" [$LINUXALL]
+		$SystemLibraries				"rt" [$LINUXALL]
 		$IgnoreImportLibrary			"TRUE"
 		$AdditionalDependencies			"$BASE winmm.lib"	[$WIN32]
 		$AdditionalDependencies			"$BASE wsock32.lib Ws2_32.lib" [$BUILD_REPLAY]
